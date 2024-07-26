@@ -127,6 +127,72 @@ pub fn get_sun_longitude(jd: i32, time_zone: i32) -> i32 {
 }
 
 
+pub fn get_leap_month_offset(a11: i32, time_zone: i32) -> i32 {
+	let k = ((a11 as f64 - 2415021.076998695) / 29.530588853 + 0.5) as i32;
+	let mut last = 0;
+	let mut i = 1; // We start with the month following lunar month 11
+	let mut arc = get_sun_longitude(get_new_moon_day(k + i, time_zone), time_zone);
+
+    loop {
+        last = arc;
+		i = i + 1;
+		arc = get_sun_longitude(get_new_moon_day(k + i, time_zone), time_zone);
+        if arc != last && i < 14 {
+            break;
+        }
+    }
+
+	return i - 1;
+}
+
+fn solar2lunar(yyyy: i32, mm: i32, dd: i32, time_zone: i32) -> LunarDate {
+
+	let day_number = jd_from_date(dd, mm, yyyy);
+
+	let k = ((day_number as f64 - 2415021.076998695) / 29.530588853) as i32;
+	let mut month_start = get_new_moon_day(k + 1, time_zone);
+	if month_start > day_number {
+		month_start = get_new_moon_day(k, time_zone);
+	}
+	let mut a11 = get_lunar_month11(yyyy, time_zone);
+	let mut b11 = a11;
+    let mut  lunar_year: i32;
+	if a11 >= month_start {
+		lunar_year = yyyy;
+		a11 = get_lunar_month11(yyyy - 1, time_zone);
+	} else {
+		lunar_year = yyyy + 1;
+		b11 = get_lunar_month11(yyyy + 1, time_zone);
+	}
+	let lunar_day = day_number - month_start + 1;
+	let diff = ((month_start - a11) / 29) as i32;
+	let mut lunar_leap = 0;
+	let mut lunar_month = diff + 11;
+    
+	if b11 - a11 > 365 {
+        println!("inne");
+		let leap_month_diff = get_leap_month_offset(a11, time_zone);
+		if diff >= leap_month_diff {
+			lunar_month = diff + 10;
+			if diff == leap_month_diff {
+				lunar_leap = 1;
+			}
+		}
+	}
+	if lunar_month > 12 {
+		lunar_month = lunar_month - 12;
+	}
+	if lunar_month >= 11 && diff < 4 {
+		lunar_year -= 1;
+	}
+    let is_leap = lunar_leap == 1;
+
+	let lunar_date = LunarDate::new(lunar_day, lunar_month, lunar_year, is_leap);
+
+	return lunar_date;
+}
+
+
 
 #[cfg(test)]
 mod tests {
@@ -140,5 +206,14 @@ mod tests {
         assert_eq!(solar_date.day, 2);
         assert_eq!(solar_date.month, 2);
         assert_eq!(solar_date.year, 2024);
+    }
+
+    #[test]
+    fn solar2lunar_test() {
+        let result = solar2lunar(2006, 9, 12, 7);
+        assert_eq!(result.day, 20);
+        assert_eq!(result.month, 7);
+        assert_eq!(result.year, 2006);
+        assert_eq!(result.is_leap, true);
     }
 }
