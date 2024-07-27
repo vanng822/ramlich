@@ -34,7 +34,7 @@ impl LunarDate {
     }
 }
 
-pub fn jd_from_date(dd: i64, mm: i64, yyyy: i64) -> i64 {
+fn jd_from_date(dd: i64, mm: i64, yyyy: i64) -> i64 {
     let a: i64 = ((14 - mm) / 12) as i64;
     let y = yyyy + 4800 - a;
     let m = mm + 12 * a - 3;
@@ -47,7 +47,7 @@ pub fn jd_from_date(dd: i64, mm: i64, yyyy: i64) -> i64 {
     return jd;
 }
 
-pub fn jd_to_date(jd: i64) -> SolarDate {
+fn jd_to_date(jd: i64) -> SolarDate {
     let a: i64;
     let b: i64;
     let c: i64;
@@ -74,7 +74,7 @@ pub fn jd_to_date(jd: i64) -> SolarDate {
     return date;
 }
 
-pub fn new_moon(ka: i64) -> f64 {
+fn new_moon(ka: i64) -> f64 {
     let k = ka as f64;
     let T = k / 1236.85; // Time in Julian centuries from 1900 January 0.5
     let T2 = T * T;
@@ -117,7 +117,7 @@ fn get_lunar_month11(yyyy: i64, time_zone: i64) -> i64 {
     return nm;
 }
 
-pub fn sun_longitude(jdn: f64) -> f64 {
+fn sun_longitude(jdn: f64) -> f64 {
     let T = (jdn - 2451545.0) / 36525.0; // Time in Julian centuries from 2000-01-01 12:00:00 GMT
     let T2 = T * T;
     let dr = PI as f64 / 180.0; // degree to radian
@@ -132,11 +132,11 @@ pub fn sun_longitude(jdn: f64) -> f64 {
     return L;
 }
 
-pub fn get_sun_longitude(jd: i64, time_zone: i64) -> i64 {
+fn get_sun_longitude(jd: i64, time_zone: i64) -> i64 {
     return (sun_longitude(jd as f64 - 0.5 - (time_zone as f64 / 24.0)) / PI as f64 * 6.0) as i64;
 }
 
-pub fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
+fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
     let k = ((a11 as f64 - 2415021.076998695) / 29.530588853 + 0.5) as i64;
     let mut last: i64;
     let mut i = 1; // We start with the month following lunar month 11
@@ -155,7 +155,7 @@ pub fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
     return i - 1;
 }
 
-fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
+pub fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
     let day_number = jd_from_date(dd, mm, yyyy);
 
     let k = ((day_number as f64 - 2415021.076998695) / 29.530588853) as i64;
