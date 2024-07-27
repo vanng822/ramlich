@@ -26,7 +26,7 @@ impl LunarDate {
 }
 
 pub fn jd_from_date(dd: i64, mm: i64, yyyy: i64) -> i64 {
-	let a: i64 = (14 - mm) / 12 as i64;
+	let a: i64 = ((14 - mm) / 12) as i64;
 	let y = yyyy + 4800 - a;
 	let m = mm + 12 * a - 3;
 	let mut jd = dd + ((153 * m + 2) / 5) as i64 + 365 * y + (y / 4) as i64 - (y / 100) as i64 + (y / 400) as i64 - 32045;
@@ -122,7 +122,7 @@ pub fn sun_longitude(jdn: f64) -> f64 {
 }
 
 pub fn get_sun_longitude(jd: i64, time_zone: i64) -> i64 {
-	return (sun_longitude(jd as f64 - 0.5 - (time_zone as f64 / 24.0)) / (PI as f64 * 6.0)) as i64;
+	return (sun_longitude(jd as f64 - 0.5 - (time_zone as f64 / 24.0)) / PI as f64 * 6.0) as i64;
 }
 
 
@@ -166,17 +166,15 @@ fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
 	}
 	let lunar_day = day_number - month_start + 1;
 	let diff = ((month_start - a11) / 29) as i64;
-	let mut lunar_leap = 0;
+	let mut is_leap = false;
 	let mut lunar_month = diff + 11;
 
-    println!("a11:{}, b11:{}, b11-a11: {}", a11, b11, b11 - a11);
 	if b11 - a11 > 365 {
-        println!("inne");
 		let leap_month_diff = get_leap_month_offset(a11, time_zone);
 		if diff >= leap_month_diff {
 			lunar_month = diff + 10;
 			if diff == leap_month_diff {
-				lunar_leap = 1;
+				is_leap = true;
 			}
 		}
 	}
@@ -186,7 +184,6 @@ fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
 	if lunar_month >= 11 && diff < 4 {
 		lunar_year = lunar_year - 1;
 	}
-    let is_leap = lunar_leap == 1;
 
 	let lunar_date = LunarDate::new(lunar_day, lunar_month, lunar_year, is_leap);
 
