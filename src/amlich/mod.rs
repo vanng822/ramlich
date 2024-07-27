@@ -183,7 +183,7 @@ fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
 		lunar_month = lunar_month - 12;
 	}
 	if lunar_month >= 11 && diff < 4 {
-		lunar_year -= 1;
+		lunar_year = lunar_year - 1;
 	}
     let is_leap = lunar_leap == 1;
 
@@ -218,11 +218,29 @@ mod tests {
     }
 
     #[test]
+    fn solar2lunar_is_leap_true_case_2_test() {
+        let result = solar2lunar(2012, 6, 12, 7);
+        assert_eq!(result.day, 23);
+        assert_eq!(result.month, 4);
+        assert_eq!(result.year, 2012);
+        assert_eq!(result.is_leap, true);
+    }
+
+    #[test]
     fn solar2lunar_is_leap_false_test() {
         let result = solar2lunar(2006, 8, 13, 7);
         assert_eq!(result.day, 20);
         assert_eq!(result.month, 7);
         assert_eq!(result.year, 2006);
+        assert_eq!(result.is_leap, false);
+    }
+
+    #[test]
+    fn solar2lunar_is_leap_false_case_2_test() {
+        let result = solar2lunar(2012, 5, 13, 7);
+        assert_eq!(result.day, 23);
+        assert_eq!(result.month, 4);
+        assert_eq!(result.year, 2012);
         assert_eq!(result.is_leap, false);
     }
 }
