@@ -122,7 +122,7 @@ pub fn sun_longitude(jdn: f64) -> f64 {
 }
 
 pub fn get_sun_longitude(jd: i64, time_zone: i64) -> i64 {
-	return (sun_longitude(jd as f64 - 0.5 - (time_zone as f64 / 24 as f64)) / (PI as f64 * 6.0)) as i64;
+	return (sun_longitude(jd as f64 - 0.5 - (time_zone as f64 / 24.0)) / (PI as f64 * 6.0)) as i64;
 }
 
 
@@ -136,7 +136,8 @@ pub fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
         last = arc;
 		i = i + 1;
 		arc = get_sun_longitude(get_new_moon_day(k + i, time_zone), time_zone);
-        if arc != last && i < 14 {
+
+        if !(arc != last && i < 14) {
             break;
         }
     }
