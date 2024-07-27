@@ -112,8 +112,8 @@ pub fn sun_longitude(jdn: f64) -> f64 {
 	let dr = PI as f64 / 180.0; // degree to radian
 	let M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2; // mean anomaly, degree
 	let L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2; // mean longitude, degree
-	let DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * (dr * M).sin();
-	let DL = DL + (0.019993 - 0.000101 * T) * (dr * 2.0 * M).sin() + 0.000290 * (dr * 3.0 * M).sin();
+	let mut DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * (dr * M).sin();
+	DL = DL + (0.019993 - 0.000101 * T) * (dr * 2.0 * M).sin() + 0.000290 * (dr * 3.0 * M).sin();
 	let mut L = L0 + DL; // true longitude, degree
 	L = L * dr;
 	L = L - (PI as f64) * 2.0 * (((L / (PI as f64 * 2.0)) as i64) as f64); // Normalize to (0, 2*PI)
