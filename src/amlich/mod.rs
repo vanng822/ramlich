@@ -7,10 +7,10 @@ pub struct SolarDate {
 }
 
 impl SolarDate {
-    pub fn new(day: i64, month: i64, year: i64) -> SolarDate {
+    pub fn new(year: i64, month: i64, day: i64) -> SolarDate {
         SolarDate {
             day: day,
-            month: month,
+            month,
             year: year,
         }
     }
@@ -24,7 +24,7 @@ pub struct LunarDate {
 }
 
 impl LunarDate {
-    pub fn new(day: i64, month: i64, year: i64, is_leap: bool) -> LunarDate {
+    pub fn new(year: i64, month: i64, day: i64, is_leap: bool) -> LunarDate {
         LunarDate {
             day: day,
             month: month,
@@ -69,9 +69,7 @@ fn jd_to_date(jd: i64) -> SolarDate {
     let month = m + 3 - 12 * ((m / 10) as i64);
     let year = b * 100 + d - 4800 + (m / 10) as i64;
 
-    let date = SolarDate::new(day, month, year);
-
-    return date;
+    return SolarDate::new(year, month, day);
 }
 
 fn new_moon(ka: i64) -> f64 {
@@ -98,8 +96,8 @@ fn new_moon(ka: i64) -> f64 {
     } else {
         deltat = -0.000278 + 0.000265 * T + 0.000262 * T2;
     };
-    let jd_new = Jd1 + C1 - deltat;
-    return jd_new;
+
+    return Jd1 + C1 - deltat;
 }
 
 fn get_new_moon_day(k: i64, time_zone: i64) -> i64 {
@@ -155,7 +153,11 @@ fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
     return i - 1;
 }
 
-pub fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
+pub fn solar2lunar(solar_date: SolarDate, time_zone: i64) -> LunarDate {
+    let yyyy = solar_date.year;
+    let mm = solar_date.month;
+    let dd = solar_date.day;
+
     let day_number = jd_from_date(dd, mm, yyyy);
 
     let k = ((day_number as f64 - 2415021.076998695) / 29.530588853) as i64;
@@ -194,9 +196,7 @@ pub fn solar2lunar(yyyy: i64, mm: i64, dd: i64, time_zone: i64) -> LunarDate {
         lunar_year = lunar_year - 1;
     }
 
-    let lunar_date = LunarDate::new(lunar_day, lunar_month, lunar_year, is_leap);
-
-    return lunar_date;
+    return LunarDate::new(lunar_year, lunar_month, lunar_day, is_leap);
 }
 
 pub fn lunar2solar(luna_date: LunarDate, time_zone: i64) -> SolarDate {
@@ -255,7 +255,8 @@ mod tests {
 
     #[test]
     fn solar2lunar_is_leap_true_test() {
-        let result = solar2lunar(2006, 9, 12, 7);
+        let test_date = SolarDate::new(2006, 9, 12);
+        let result = solar2lunar(test_date, 7);
         assert_eq!(result.day, 20);
         assert_eq!(result.month, 7);
         assert_eq!(result.year, 2006);
@@ -263,17 +264,9 @@ mod tests {
     }
 
     #[test]
-    fn solar2lunar_is_leap_true_case_2_test() {
-        let result = solar2lunar(2012, 6, 12, 7);
-        assert_eq!(result.day, 23);
-        assert_eq!(result.month, 4);
-        assert_eq!(result.year, 2012);
-        assert_eq!(result.is_leap, true);
-    }
-
-    #[test]
     fn solar2lunar_is_leap_false_test() {
-        let result = solar2lunar(2006, 8, 13, 7);
+        let test_date = SolarDate::new(2006, 8, 13);
+        let result = solar2lunar(test_date, 7);
         assert_eq!(result.day, 20);
         assert_eq!(result.month, 7);
         assert_eq!(result.year, 2006);
@@ -281,8 +274,19 @@ mod tests {
     }
 
     #[test]
+    fn solar2lunar_is_leap_true_case_2_test() {
+        let test_date = SolarDate::new(2012, 6, 12);
+        let result = solar2lunar(test_date, 7);
+        assert_eq!(result.day, 23);
+        assert_eq!(result.month, 4);
+        assert_eq!(result.year, 2012);
+        assert_eq!(result.is_leap, true);
+    }
+
+    #[test]
     fn solar2lunar_is_leap_false_case_2_test() {
-        let result = solar2lunar(2012, 5, 13, 7);
+        let test_date = SolarDate::new(2012, 5, 13);
+        let result = solar2lunar(test_date, 7);
         assert_eq!(result.day, 23);
         assert_eq!(result.month, 4);
         assert_eq!(result.year, 2012);
@@ -291,7 +295,7 @@ mod tests {
 
     #[test]
     fn lunar2solar_is_leap_true_test() {
-        let test_date = LunarDate::new(20, 7, 2006, true);
+        let test_date = LunarDate::new(2006, 7, 20, true);
         let result = lunar2solar(test_date, 7);
         assert_eq!(result.day, 12);
         assert_eq!(result.month, 9);
@@ -300,7 +304,7 @@ mod tests {
 
     #[test]
     fn lunar2solar_is_leap_false_test() {
-        let test_date = LunarDate::new(20, 7, 2006, false);
+        let test_date = LunarDate::new(2006, 7, 20, false);
         let result = lunar2solar(test_date, 7);
         assert_eq!(result.day, 13);
         assert_eq!(result.month, 8);
@@ -309,7 +313,7 @@ mod tests {
 
     #[test]
     fn lunar2solar_is_leap_true_case_2_test() {
-        let test_date = LunarDate::new(23, 4, 2012, true);
+        let test_date = LunarDate::new(2012, 4, 23, true);
         let result = lunar2solar(test_date, 7);
         assert_eq!(result.day, 12);
         assert_eq!(result.month, 6);
@@ -318,7 +322,7 @@ mod tests {
 
     #[test]
     fn lunar2solar_is_leap_false_case_2_test() {
-        let test_date = LunarDate::new(23, 4, 2012, false);
+        let test_date = LunarDate::new(2012, 4, 23, false);
         let result = lunar2solar(test_date, 7);
         assert_eq!(result.day, 13);
         assert_eq!(result.month, 5);
