@@ -37,7 +37,7 @@ impl fmt::Display for VNDate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(
             f,
-            "{lunar} => {solar}",
+            "{lunar} ({solar})",
             lunar = self.lunar_date,
             solar = self.solar_time.date_naive()
         );
