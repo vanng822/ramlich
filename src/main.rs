@@ -11,5 +11,8 @@ fn main() {
         dd.lunar_date.day, dd.lunar_date.month, dd.lunar_date.year
     );
     println!("{}", dd.time_zone_offset);
-    print!("{}", dd)
+    println!("{}", dd);
+    println!("{}", dd.with_year(2028));
+    println!("{}", dd.with_month(10));
+    println!("{}", dd.with_day(28));
 }
