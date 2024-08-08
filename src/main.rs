@@ -11,4 +11,5 @@ fn main() {
         dd.lunar_date.day, dd.lunar_date.month, dd.lunar_date.year
     );
     println!("{}", dd.time_zone_offset);
+    print!("{}", dd)
 }

@@ -1,6 +1,8 @@
+use std::fmt;
+
 use crate::amlich;
 use chrono::{DateTime, Datelike, Utc};
-const TimeZoneOffset: i64 = 7;
+const TIME_ZONE_OFFSET: i64 = 7;
 
 pub struct VNDate {
     pub solar_time: DateTime<Utc>,
@@ -27,6 +29,17 @@ impl VNDate {
     }
 
     pub fn today() -> VNDate {
-        return VNDate::new(Utc::now(), TimeZoneOffset);
+        return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
+    }
+}
+
+impl fmt::Display for VNDate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(
+            f,
+            "{lunar} => {solar}",
+            lunar = self.lunar_date,
+            solar = self.solar_time.date_naive()
+        );
     }
 }

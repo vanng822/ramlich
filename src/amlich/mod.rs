@@ -1,4 +1,4 @@
-use std::f32::consts::PI;
+use std::{f32::consts::PI, fmt};
 
 pub struct SolarDate {
     pub day: i64,
@@ -16,11 +16,25 @@ impl SolarDate {
     }
 }
 
+impl fmt::Display for SolarDate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let dstring = format!("{}-{:02}-{:02}", self.year, self.month, self.day);
+        return write!(f, "{dstring}");
+    }
+}
+
 pub struct LunarDate {
     pub day: i64,
     pub month: i64,
     pub year: i64,
     pub is_leap: bool,
+}
+
+impl fmt::Display for LunarDate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let dstring = format!("{}-{:02}-{:02}", self.year, self.month, self.day);
+        return write!(f, "{dstring}");
+    }
 }
 
 impl LunarDate {
