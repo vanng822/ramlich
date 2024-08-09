@@ -28,19 +28,19 @@ impl VNDate {
         };
     }
 
-    pub fn with_year(&self, year: i32) -> VNDate {
+    pub fn with_solar_year(&self, year: i32) -> VNDate {
         let solar_time = self.solar_time.with_year(year).unwrap();
 
         return VNDate::new(solar_time, self.time_zone_offset);
     }
 
-    pub fn with_month(&self, month: u32) -> VNDate {
+    pub fn with_solar_month(&self, month: u32) -> VNDate {
         let solar_time = self.solar_time.with_month(month).unwrap();
 
         return VNDate::new(solar_time, self.time_zone_offset);
     }
 
-    pub fn with_day(&self, day: u32) -> VNDate {
+    pub fn with_solar_day(&self, day: u32) -> VNDate {
         let solar_time = self.solar_time.with_day(day).unwrap();
 
         return VNDate::new(solar_time, self.time_zone_offset);
