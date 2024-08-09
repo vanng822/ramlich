@@ -28,22 +28,31 @@ impl VNDate {
         };
     }
 
-    pub fn with_solar_year(&self, year: i32) -> VNDate {
-        let solar_time = self.solar_time.with_year(year).unwrap();
+    pub fn with_solar_year(&self, year: i32) -> Option<VNDate> {
+        let solar_time = self.solar_time.with_year(year);
+        if solar_time == None {
+            return None;
+        }
 
-        return VNDate::new(solar_time, self.time_zone_offset);
+        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
     }
 
-    pub fn with_solar_month(&self, month: u32) -> VNDate {
-        let solar_time = self.solar_time.with_month(month).unwrap();
+    pub fn with_solar_month(&self, month: u32) -> Option<VNDate> {
+        let solar_time = self.solar_time.with_month(month);
+        if solar_time == None {
+            return None;
+        }
 
-        return VNDate::new(solar_time, self.time_zone_offset);
+        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
     }
 
-    pub fn with_solar_day(&self, day: u32) -> VNDate {
-        let solar_time = self.solar_time.with_day(day).unwrap();
+    pub fn with_solar_day(&self, day: u32) -> Option<VNDate> {
+        let solar_time = self.solar_time.with_day(day);
+        if solar_time == None {
+            return None;
+        }
 
-        return VNDate::new(solar_time, self.time_zone_offset);
+        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
     }
 
     pub fn today() -> VNDate {
