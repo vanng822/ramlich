@@ -10,7 +10,6 @@ fn main() {
         "{}-{}-{}",
         dd.lunar_date.day, dd.lunar_date.month, dd.lunar_date.year
     );
-    println!("{}", dd.time_zone_offset);
     println!("{}", dd);
     println!("{}", dd.with_solar_year(2028).unwrap());
     println!("{}", dd.with_solar_month(10).unwrap());

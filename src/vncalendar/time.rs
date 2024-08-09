@@ -1,7 +1,7 @@
-use std::{fmt, ptr::null};
+use std::fmt;
 
 use crate::amlich;
-use chrono::{DateTime, Datelike, Days, Months, Utc};
+use chrono::{DateTime, Datelike, Days, Months, TimeDelta, Utc};
 const TIME_ZONE_OFFSET: i64 = 7;
 
 pub struct VNDate {
@@ -26,6 +26,14 @@ impl VNDate {
             time_zone_offset: time_zone_offset,
             lunar_date: lunar_date,
         };
+    }
+
+    pub fn checked_add_signed(&self, rhs: TimeDelta) -> Option<VNDate> {
+        let solar_time = self.solar_time.checked_add_signed(rhs);
+        if solar_time == None {
+            return None;
+        }
+        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
     }
 
     pub fn with_solar_year(&self, year: i32) -> Option<VNDate> {
@@ -144,5 +152,17 @@ mod tests {
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         let other = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         assert_eq!(true, d.equal(other));
+    }
+
+    #[test]
+    fn checked_add_signed_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        // one day in seconds
+        let rhs = TimeDelta::new(86_400, 0).unwrap();
+        let result = d.checked_add_signed(rhs).unwrap();
+        assert_eq!(12, result.solar_time.day());
     }
 }
