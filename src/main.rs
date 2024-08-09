@@ -15,4 +15,5 @@ fn main() {
     println!("{}", dd.with_solar_year(2028).unwrap());
     println!("{}", dd.with_solar_month(10).unwrap());
     println!("{}", dd.with_solar_day(28).unwrap());
+    println!("{}", dd.add_solar_date(1, 0, 0));
 }

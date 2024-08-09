@@ -1,7 +1,7 @@
 use std::{fmt, ptr::null};
 
 use crate::amlich;
-use chrono::{DateTime, Datelike, Utc};
+use chrono::{DateTime, Datelike, Days, Months, Utc};
 const TIME_ZONE_OFFSET: i64 = 7;
 
 pub struct VNDate {
@@ -55,6 +55,14 @@ impl VNDate {
         return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
     }
 
+    pub fn add_solar_date(&self, years: u32, months: u32, days: u64) -> VNDate {
+        let years_in_months = years * 12;
+        let mut d = self.solar_time + Months::new(months + years_in_months);
+        d = d + Days::new(days);
+
+        return VNDate::new(d, self.time_zone_offset);
+    }
+
     pub fn today() -> VNDate {
         return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
@@ -68,5 +76,21 @@ impl fmt::Display for VNDate {
             lunar = self.lunar_date,
             solar = self.solar_time.date_naive()
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add_solar_date_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET).add_solar_date(1, 1, 1);
+        assert_eq!(2023, result.solar_time.year());
+        assert_eq!(10, result.solar_time.month());
+        assert_eq!(12, result.solar_time.day());
     }
 }
