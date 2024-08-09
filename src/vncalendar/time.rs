@@ -57,8 +57,7 @@ impl VNDate {
 
     pub fn add_solar_date(&self, years: u32, months: u32, days: u64) -> VNDate {
         let years_in_months = years * 12;
-        let mut d = self.solar_time + Months::new(months + years_in_months);
-        d = d + Days::new(days);
+        let d = self.solar_time + Months::new(months + years_in_months) + Days::new(days);
 
         return VNDate::new(d, self.time_zone_offset);
     }
