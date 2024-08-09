@@ -62,6 +62,10 @@ impl VNDate {
         return VNDate::new(d, self.time_zone_offset);
     }
 
+    pub fn equal(&self, other: VNDate) -> bool {
+        return self.solar_time.eq(&other.solar_time);
+    }
+
     pub fn today() -> VNDate {
         return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
@@ -91,5 +95,54 @@ mod tests {
         assert_eq!(2024, result.solar_time.year());
         assert_eq!(5, result.solar_time.month());
         assert_eq!(21, result.solar_time.day());
+    }
+
+    #[test]
+    fn with_solar_year_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
+            .with_solar_year(2024)
+            .unwrap();
+        assert_eq!(2024, result.solar_time.year());
+        assert_eq!(9, result.solar_time.month());
+        assert_eq!(11, result.solar_time.day());
+    }
+
+    #[test]
+    fn with_solar_month_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
+            .with_solar_month(7)
+            .unwrap();
+        assert_eq!(2022, result.solar_time.year());
+        assert_eq!(7, result.solar_time.month());
+        assert_eq!(11, result.solar_time.day());
+    }
+
+    #[test]
+    fn with_solar_day_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
+            .with_solar_day(22)
+            .unwrap();
+        assert_eq!(2022, result.solar_time.year());
+        assert_eq!(9, result.solar_time.month());
+        assert_eq!(22, result.solar_time.day());
+    }
+
+    #[test]
+    fn equal_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        let other = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        assert_eq!(true, d.equal(other));
     }
 }
