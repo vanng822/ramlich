@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::amlich;
 use chrono::{DateTime, Datelike, Days, Months, TimeDelta, Utc};
-const TIME_ZONE_OFFSET: i64 = 7;
+pub const TIME_ZONE_OFFSET: i64 = 7;
 
 pub struct VNDate {
     pub solar_time: DateTime<Utc>,
