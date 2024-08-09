@@ -12,7 +12,7 @@ fn main() {
     );
     println!("{}", dd.time_zone_offset);
     println!("{}", dd);
-    println!("{}", dd.with_solar_year(2028));
-    println!("{}", dd.with_solar_month(10));
-    println!("{}", dd.with_solar_day(28));
+    println!("{}", dd.with_solar_year(2028).unwrap());
+    println!("{}", dd.with_solar_month(10).unwrap());
+    println!("{}", dd.with_solar_day(28).unwrap());
 }
