@@ -87,9 +87,9 @@ mod tests {
         // Sun, 11 Sep 2022 18:34:48 UTC
         let nanos: i64 = 1662921288_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
-        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET).add_solar_date(1, 1, 1);
-        assert_eq!(2023, result.solar_time.year());
-        assert_eq!(10, result.solar_time.month());
-        assert_eq!(12, result.solar_time.day());
+        let result = VNDate::new(solar_time, TIME_ZONE_OFFSET).add_solar_date(1, 7, 40);
+        assert_eq!(2024, result.solar_time.year());
+        assert_eq!(5, result.solar_time.month());
+        assert_eq!(21, result.solar_time.day());
     }
 }
