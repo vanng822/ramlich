@@ -74,11 +74,11 @@ impl VNDate {
         return self.solar_time.eq(&other.solar_time);
     }
 
-    pub fn get_lunar_date(&self) -> LunarDate {
+    pub const fn get_lunar_date(&self) -> LunarDate {
         return self.lunar_date;
     }
 
-    pub fn get_solar_datetime(&self) -> DateTime<Utc> {
+    pub const fn get_solar_datetime(&self) -> DateTime<Utc> {
         return self.solar_time;
     }
 
