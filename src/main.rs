@@ -6,10 +6,7 @@ fn main() {
     println!("Hello, world!");
     println!("{}-{}-{}", d.day, d.month, d.year);
     let dd = vncalendar::time::VNDate::today();
-    println!(
-        "{}-{}-{}",
-        dd.lunar_date.day, dd.lunar_date.month, dd.lunar_date.year
-    );
+    println!("{}-{}-{}", dd.year(), dd.month(), dd.day());
     println!("{}", dd);
     println!("{}", dd.with_solar_year(2028).unwrap());
     println!("{}", dd.with_solar_month(10).unwrap());

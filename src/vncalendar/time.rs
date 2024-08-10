@@ -1,13 +1,13 @@
 use std::fmt;
 
-use crate::amlich;
+use crate::amlich::{self, LunarDate, SolarDate};
 use chrono::{DateTime, Datelike, Days, Months, TimeDelta, Utc};
 pub const TIME_ZONE_OFFSET: i64 = 7;
 
 pub struct VNDate {
-    pub solar_time: DateTime<Utc>,
-    pub lunar_date: amlich::LunarDate,
-    pub time_zone_offset: i64,
+    solar_time: DateTime<Utc>,
+    lunar_date: amlich::LunarDate,
+    time_zone_offset: i64,
 }
 
 impl VNDate {
@@ -72,6 +72,42 @@ impl VNDate {
 
     pub fn equal(&self, other: VNDate) -> bool {
         return self.solar_time.eq(&other.solar_time);
+    }
+
+    pub fn get_lunar_date(&self) -> LunarDate {
+        return self.lunar_date;
+    }
+
+    pub fn get_solar_datetime(&self) -> DateTime<Utc> {
+        return self.solar_time;
+    }
+
+    pub fn solar_day(&self) -> u32 {
+        return self.solar_time.day();
+    }
+
+    pub fn solar_month(&self) -> u32 {
+        return self.solar_time.month();
+    }
+
+    pub fn solar_year(&self) -> i32 {
+        return self.solar_time.year();
+    }
+
+    pub fn day(&self) -> u32 {
+        return self.lunar_date.day as u32;
+    }
+
+    pub fn month(&self) -> u32 {
+        return self.lunar_date.month as u32;
+    }
+
+    pub fn year(&self) -> i32 {
+        return self.lunar_date.year as i32;
+    }
+
+    pub fn is_leap(&self) -> bool {
+        return self.lunar_date.is_leap;
     }
 
     pub fn today() -> VNDate {

@@ -56,7 +56,7 @@ pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
         let solar_date = start.checked_add_days(Days::new(i)).unwrap();
         let d = VNDate::new(solar_date, time::TIME_ZONE_OFFSET);
         // next month
-        if d.solar_time.month() != month {
+        if d.solar_month() != month {
             break;
         }
         dates.push(d);
