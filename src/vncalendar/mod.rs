@@ -89,13 +89,28 @@ mod tests {
 
     #[test]
     fn get_year_month_dates_test() {
-        let res = get_year_month_dates(2016);
+        let res = get_year_month_dates(2024);
+        /*
         for (k, v) in res.iter() {
             println!("{}", *k);
             for d in v {
                 println!("{}", d);
             }
         }
+        */
         assert_eq!(12, res.len());
+        assert_eq!(31, res.get(&Month::January).unwrap().len());
+        assert_eq!(29, res.get(&Month::February).unwrap().len());
+        assert_eq!(31, res.get(&Month::March).unwrap().len());
+        assert_eq!(31, res.get(&Month::March).unwrap().len());
+        assert_eq!(30, res.get(&Month::April).unwrap().len());
+        assert_eq!(31, res.get(&Month::May).unwrap().len());
+        assert_eq!(30, res.get(&Month::June).unwrap().len());
+        assert_eq!(31, res.get(&Month::July).unwrap().len());
+        assert_eq!(31, res.get(&Month::August).unwrap().len());
+        assert_eq!(30, res.get(&Month::September).unwrap().len());
+        assert_eq!(31, res.get(&Month::October).unwrap().len());
+        assert_eq!(30, res.get(&Month::November).unwrap().len());
+        assert_eq!(31, res.get(&Month::December).unwrap().len());
     }
 }
