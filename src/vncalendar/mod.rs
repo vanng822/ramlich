@@ -1,7 +1,46 @@
 use chrono::{DateTime, Datelike, Days, TimeZone, Utc};
+use std::collections::HashMap;
+use std::fmt;
 use time::VNDate;
 
 pub mod time;
+
+#[derive(Hash, Eq, PartialEq, Copy, Clone, Debug)]
+pub enum Month {
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12,
+}
+
+impl fmt::Display for Month {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "{:?}", self);
+    }
+}
+
+pub const MONTHS: [Month; 12] = [
+    Month::January,
+    Month::February,
+    Month::March,
+    Month::April,
+    Month::May,
+    Month::June,
+    Month::July,
+    Month::August,
+    Month::September,
+    Month::October,
+    Month::November,
+    Month::December,
+];
 
 pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
     let mut dates: Vec<VNDate> = vec![];
@@ -26,6 +65,15 @@ pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
     return dates;
 }
 
+pub fn get_year_month_dates(year: i32) -> HashMap<Month, Vec<VNDate>> {
+    let mut result: HashMap<Month, Vec<VNDate>> = HashMap::new();
+    for m in MONTHS {
+        result.insert(m, get_month_dates(year, m as u32));
+    }
+
+    return result;
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -37,5 +85,17 @@ mod tests {
         assert_eq!(29, get_month_dates(2016, 2).len());
         assert_eq!(28, get_month_dates(2017, 2).len());
         assert_eq!(29, get_month_dates(2024, 2).len());
+    }
+
+    #[test]
+    fn get_year_month_dates_test() {
+        let res = get_year_month_dates(2016);
+        for (k, v) in res.iter() {
+            println!("{}", *k);
+            for d in v {
+                println!("{}", d);
+            }
+        }
+        assert_eq!(12, res.len());
     }
 }
