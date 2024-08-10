@@ -1,6 +1,6 @@
-use std::{f32::consts::PI, fmt};
+use std::f32::consts::PI;
 
-use super::{LunarDate, SolarDate};
+use super::SolarDate;
 
 pub fn jd_from_date(dd: i64, mm: i64, yyyy: i64) -> i64 {
     let a: i64 = ((14 - mm) / 12) as i64;
