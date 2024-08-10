@@ -9,8 +9,8 @@ pub struct SolarDate {
 }
 
 impl SolarDate {
-    pub fn new(year: i64, month: i64, day: i64) -> SolarDate {
-        SolarDate {
+    pub fn new(year: i64, month: i64, day: i64) -> Self {
+        Self {
             day: day,
             month,
             year: year,
@@ -45,8 +45,8 @@ impl fmt::Display for LunarDate {
 }
 
 impl LunarDate {
-    pub fn new(year: i64, month: i64, day: i64, is_leap: bool) -> LunarDate {
-        LunarDate {
+    pub fn new(year: i64, month: i64, day: i64, is_leap: bool) -> Self {
+        Self {
             day: day,
             month: month,
             year: year,

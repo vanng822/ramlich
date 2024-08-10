@@ -11,7 +11,7 @@ pub struct VNDate {
 }
 
 impl VNDate {
-    pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> VNDate {
+    pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
         let lunar_date = amlich::solar2lunar(
             amlich::SolarDate::new(
                 solar_time.year() as i64,
@@ -21,7 +21,7 @@ impl VNDate {
             time_zone_offset,
         );
 
-        return VNDate {
+        return Self {
             solar_time: solar_time,
             time_zone_offset: time_zone_offset,
             lunar_date: lunar_date,
