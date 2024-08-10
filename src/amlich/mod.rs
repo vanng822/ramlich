@@ -1,4 +1,4 @@
-use std::{f32::consts::PI, fmt};
+use std::fmt;
 mod fns;
 use fns::{get_leap_month_offset, get_lunar_month11, get_new_moon_day, jd_to_date};
 
@@ -35,7 +35,11 @@ pub struct LunarDate {
 
 impl fmt::Display for LunarDate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let dstring = format!("{}-{:02}-{:02}", self.year, self.month, self.day);
+        let print_leap = if self.is_leap { "L" } else { "" };
+        let dstring = format!(
+            "{}-{:02}-{:02}{}",
+            self.year, self.month, self.day, print_leap
+        );
         return write!(f, "{dstring}");
     }
 }

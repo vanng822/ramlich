@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, Days, TimeZone, Utc};
+use chrono::{DateTime, Days, TimeZone, Utc};
 use std::collections::HashMap;
 use std::fmt;
 use time::VNDate;
