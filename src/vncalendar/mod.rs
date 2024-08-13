@@ -5,6 +5,8 @@ use time::VNDate;
 
 pub mod time;
 
+pub const TIME_ZONE_OFFSET: i64 = 7;
+
 #[derive(Hash, Eq, PartialEq, Copy, Clone, Debug)]
 pub enum Month {
     January = 1,
@@ -49,12 +51,12 @@ pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
 
     for i in 0..28 {
         let solar_date = start.checked_add_days(Days::new(i)).unwrap();
-        dates.push(VNDate::new(solar_date, time::TIME_ZONE_OFFSET));
+        dates.push(VNDate::new(solar_date, TIME_ZONE_OFFSET));
     }
 
     for i in 28..31 {
         let solar_date = start.checked_add_days(Days::new(i)).unwrap();
-        let d = VNDate::new(solar_date, time::TIME_ZONE_OFFSET);
+        let d = VNDate::new(solar_date, TIME_ZONE_OFFSET);
         // next month
         if d.solar_month() != month {
             break;

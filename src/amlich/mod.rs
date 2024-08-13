@@ -4,13 +4,13 @@ use fns::{get_leap_month_offset, get_lunar_month11, get_new_moon_day, jd_to_date
 
 #[derive(Copy, Clone)]
 pub struct SolarDate {
-    pub day: u64,
+    pub day: u32,
     pub month: u32,
     pub year: i32,
 }
 
 impl SolarDate {
-    pub fn new(year: i32, month: u32, day: u64) -> Self {
+    pub fn new(year: i32, month: u32, day: u32) -> Self {
         Self {
             day: day,
             month,
@@ -28,7 +28,7 @@ impl fmt::Display for SolarDate {
 
 #[derive(Copy, Clone)]
 pub struct LunarDate {
-    pub day: u64,
+    pub day: u32,
     pub month: u32,
     pub year: i32,
     pub is_leap: bool,
@@ -46,7 +46,7 @@ impl fmt::Display for LunarDate {
 }
 
 impl LunarDate {
-    pub fn new(year: i32, month: u32, day: u64, is_leap: bool) -> Self {
+    pub fn new(year: i32, month: u32, day: u32, is_leap: bool) -> Self {
         Self {
             day: day,
             month: month,
@@ -102,7 +102,7 @@ pub fn solar2lunar(solar_date: SolarDate, time_zone: i64) -> LunarDate {
     return LunarDate::new(
         lunar_year as i32,
         lunar_month as u32,
-        lunar_day as u64,
+        lunar_day as u32,
         is_leap,
     );
 }

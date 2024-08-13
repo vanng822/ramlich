@@ -1,8 +1,9 @@
 use std::fmt;
 
-use crate::amlich::{self, LunarDate, SolarDate};
+use crate::amlich::{self, LunarDate};
 use chrono::{DateTime, Datelike, Days, Duration, Months, TimeDelta, Utc};
-pub const TIME_ZONE_OFFSET: i64 = 7;
+
+use super::TIME_ZONE_OFFSET;
 
 pub struct VNDate {
     solar_time: DateTime<Utc>,
@@ -13,11 +14,7 @@ pub struct VNDate {
 impl VNDate {
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
         let lunar_date = amlich::solar2lunar(
-            amlich::SolarDate::new(
-                solar_time.year() as i64,
-                solar_time.month() as i64,
-                solar_time.day() as i64,
-            ),
+            amlich::SolarDate::new(solar_time.year(), solar_time.month(), solar_time.day()),
             time_zone_offset,
         );
 
@@ -76,7 +73,7 @@ impl VNDate {
         return VNDate::new(d, self.time_zone_offset);
     }
 
-    pub fn equal(&self, other: VNDate) -> bool {
+    pub fn equal(&self, other: &VNDate) -> bool {
         return self.solar_time.eq(&other.solar_time);
     }
 
@@ -121,6 +118,12 @@ impl VNDate {
     }
 }
 
+impl PartialEq for VNDate {
+    fn eq(&self, other: &Self) -> bool {
+        self.equal(other)
+    }
+}
+
 impl fmt::Display for VNDate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(
@@ -135,6 +138,19 @@ impl fmt::Display for VNDate {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn equal_op_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+
+        let d1 = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        let d2 = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        assert!(d1 == d2);
+        let d3 = VNDate::new(solar_time, TIME_ZONE_OFFSET).add_solar_date(1, 7, 40);
+        assert!(d1 != d3);
+    }
 
     #[test]
     fn add_solar_date_test() {
@@ -204,7 +220,7 @@ mod tests {
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         let other = VNDate::new(solar_time, TIME_ZONE_OFFSET);
-        assert_eq!(true, d.equal(other));
+        assert_eq!(true, d.equal(&other));
     }
 
     #[test]
