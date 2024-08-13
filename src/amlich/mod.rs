@@ -2,14 +2,15 @@ use std::fmt;
 mod fns;
 use fns::{get_leap_month_offset, get_lunar_month11, get_new_moon_day, jd_to_date};
 
+#[derive(Copy, Clone)]
 pub struct SolarDate {
-    pub day: i64,
-    pub month: i64,
-    pub year: i64,
+    pub day: u64,
+    pub month: u32,
+    pub year: i32,
 }
 
 impl SolarDate {
-    pub fn new(year: i64, month: i64, day: i64) -> Self {
+    pub fn new(year: i32, month: u32, day: u64) -> Self {
         Self {
             day: day,
             month,
@@ -27,9 +28,9 @@ impl fmt::Display for SolarDate {
 
 #[derive(Copy, Clone)]
 pub struct LunarDate {
-    pub day: i64,
-    pub month: i64,
-    pub year: i64,
+    pub day: u64,
+    pub month: u32,
+    pub year: i32,
     pub is_leap: bool,
 }
 
@@ -45,7 +46,7 @@ impl fmt::Display for LunarDate {
 }
 
 impl LunarDate {
-    pub fn new(year: i64, month: i64, day: i64, is_leap: bool) -> Self {
+    pub fn new(year: i32, month: u32, day: u64, is_leap: bool) -> Self {
         Self {
             day: day,
             month: month,
@@ -56,9 +57,9 @@ impl LunarDate {
 }
 
 pub fn solar2lunar(solar_date: SolarDate, time_zone: i64) -> LunarDate {
-    let yyyy = solar_date.year;
-    let mm = solar_date.month;
-    let dd = solar_date.day;
+    let yyyy = solar_date.year as i64;
+    let mm = solar_date.month as i64;
+    let dd = solar_date.day as i64;
 
     let day_number = fns::jd_from_date(dd, mm, yyyy);
 
@@ -98,13 +99,18 @@ pub fn solar2lunar(solar_date: SolarDate, time_zone: i64) -> LunarDate {
         lunar_year = lunar_year - 1;
     }
 
-    return LunarDate::new(lunar_year, lunar_month, lunar_day, is_leap);
+    return LunarDate::new(
+        lunar_year as i32,
+        lunar_month as u32,
+        lunar_day as u64,
+        is_leap,
+    );
 }
 
 pub fn lunar2solar(luna_date: LunarDate, time_zone: i64) -> SolarDate {
-    let lunar_year = luna_date.year;
-    let lunar_month = luna_date.month;
-    let lunar_day = luna_date.day;
+    let lunar_year = luna_date.year as i64;
+    let lunar_month = luna_date.month as i64;
+    let lunar_day = luna_date.day as i64;
     let lunar_leap: i64 = luna_date.is_leap.into();
 
     let a11: i64;

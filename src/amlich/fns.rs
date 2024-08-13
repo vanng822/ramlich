@@ -37,7 +37,7 @@ pub fn jd_to_date(jd: i64) -> SolarDate {
     let month = m + 3 - 12 * ((m / 10) as i64);
     let year = b * 100 + d - 4800 + (m / 10) as i64;
 
-    return SolarDate::new(year, month, day);
+    return SolarDate::new(year as i32, month as u32, day as u64);
 }
 
 pub fn new_moon(ka: i64) -> f64 {
