@@ -1,6 +1,5 @@
 extern crate amlich;
-
-mod vncalendar;
+extern crate vncalendar;
 
 fn main() {
     let d = amlich::SolarDate::new(1, 10, 2024);

@@ -16,6 +16,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Build amlich
+      run: cd amlich && cargo build --verbose
+    - name: Run amlich tests
+      run: cd amlich && cargo test --verbose
+    - name: Build vncalendar
+      run: cd vncalendar && cargo build --verbose
+    - name: Run vncalendar tests
+      run: cd vncalendar && cargo test --verbose
     - name: Build
       run: cargo build --verbose
     - name: Run tests
