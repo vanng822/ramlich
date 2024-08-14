@@ -1,6 +1,6 @@
+extern crate amlich;
 use std::fmt;
 
-use crate::amlich::{self, LunarDate};
 use chrono::{DateTime, Datelike, Days, Duration, Months, TimeDelta, Utc};
 
 use super::TIME_ZONE_OFFSET;
@@ -77,7 +77,7 @@ impl VNDate {
         return self.solar_time.eq(&other.solar_time);
     }
 
-    pub const fn get_lunar_date(&self) -> LunarDate {
+    pub const fn get_lunar_date(&self) -> amlich::LunarDate {
         return self.lunar_date;
     }
 

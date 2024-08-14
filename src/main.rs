@@ -1,4 +1,5 @@
-mod amlich;
+extern crate amlich;
+
 mod vncalendar;
 
 fn main() {

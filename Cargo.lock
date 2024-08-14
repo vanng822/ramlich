@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "amlich"
+version = "0.1.0"
+
+[[package]]
 name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -142,6 +146,7 @@ dependencies = [
 name = "ramlich"
 version = "0.1.0"
 dependencies = [
+ "amlich",
  "chrono",
 ]
 
