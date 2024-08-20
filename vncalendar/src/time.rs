@@ -308,11 +308,23 @@ mod tests {
         let nanos: i64 = 1662921288_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
-        assert_eq!("2022-07-11".to_string(), d.format(Some("%y-%m-%d")));
-        assert_eq!("2022-07-11".to_string(), d.format(Some("yyyy-mm-dd")));
-        assert_eq!("11/07/2022".to_string(), d.format(Some("%d/%m/%y")));
-        assert_eq!("2022/07/11".to_string(), d.format(Some("yyyy/mm/dd")));
-        let error = d.format(Some("y-m-d"));
+        assert_eq!(
+            "2022-08-16".to_string(),
+            d.format(Some("%y-%m-%d")).unwrap()
+        );
+        assert_eq!(
+            "2022-08-16".to_string(),
+            d.format(Some("yyyy-mm-dd")).unwrap()
+        );
+        assert_eq!(
+            "16/08/2022".to_string(),
+            d.format(Some("%d/%m/%y")).unwrap()
+        );
+        assert_eq!(
+            "2022/08/16".to_string(),
+            d.format(Some("yyyy/mm/dd")).unwrap()
+        );
+        let error = d.format(Some("y-m-d")).unwrap_err();
         assert_eq!(standard_error, error);
     }
 }
