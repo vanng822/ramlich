@@ -1,3 +1,5 @@
+#![allow(warnings)]
+
 use std::f32::consts::PI;
 
 use super::SolarDate;
