@@ -309,8 +309,10 @@ mod tests {
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         assert_eq!("2022-07-11".to_string(), d.format(Some("%y-%m-%d")));
-        assert_eq!("2022-07-11".to_string(), d.format(Some("yyy-mm-dd")));
+        assert_eq!("2022-07-11".to_string(), d.format(Some("yyyy-mm-dd")));
         assert_eq!("11/07/2022".to_string(), d.format(Some("%d/%m/%y")));
-        assert_eq!("2022/07/11".to_string(), d.format(Some("yyy/mm/dd")));
+        assert_eq!("2022/07/11".to_string(), d.format(Some("yyyy/mm/dd")));
+        let error = d.format(Some("y-m-d"));
+        assert_eq!(standard_error, error);
     }
 }
