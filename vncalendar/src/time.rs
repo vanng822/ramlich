@@ -1,5 +1,5 @@
 extern crate amlich;
-use std::fmt;
+use std::fmt::{self};
 
 use chrono::{DateTime, Datelike, Days, Duration, Months, TimeDelta, Utc};
 
@@ -10,6 +10,8 @@ pub struct VNDate {
     lunar_date: amlich::LunarDate,
     time_zone_offset: i64,
 }
+
+const standard_error: &str = "Invalid date format, should be similar as yyyy-mm-dd or %y-%m-%d";
 
 impl VNDate {
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
@@ -111,6 +113,71 @@ impl VNDate {
 
     pub fn is_leap(&self) -> bool {
         return self.lunar_date.is_leap;
+    }
+
+    pub fn format(&self, fmt: Option<&str>) -> Result<String, &str> {
+        let s = fmt.unwrap_or("");
+
+        if s != "" {
+            let mut parts: Vec<&str> = s.split('-').collect();
+            let mut separator: &str = "-";
+            if parts.len() != 3 {
+                parts = s.split('/').collect();
+                if parts.len() != 3 {
+                    return Err(standard_error);
+                }
+                separator = "/";
+            }
+
+            let first = parts[0];
+            let second = parts[1];
+            let third = parts[2];
+
+            let mut correct_syntax = false;
+            let mut reverse = false;
+
+            match first {
+                "yyyy" => correct_syntax = second == "mm" && third == "dd",
+                "%y" => correct_syntax = second == "%m" && third == "%d",
+                "dd" => {
+                    correct_syntax = second == "mm" && third == "yyyy";
+                    reverse = true;
+                }
+                "%d" => {
+                    correct_syntax = second == "%m" && third == "%y";
+                    reverse = true;
+                }
+                _ => correct_syntax = false,
+            };
+
+            if !correct_syntax {
+                return Err(standard_error);
+            }
+
+            return match reverse {
+                true => Ok(format!(
+                    "{1:02}{0}{2:02}{0}{3:02}",
+                    separator,
+                    self.day(),
+                    self.month(),
+                    self.year()
+                )),
+                false => Ok(format!(
+                    "{1}{0}{2:02}{0}{3:02}",
+                    separator,
+                    self.year(),
+                    self.month(),
+                    self.day()
+                )),
+            };
+        }
+
+        return Ok(format!(
+            "{}-{:02}-{:02}",
+            self.year(),
+            self.month(),
+            self.day()
+        ));
     }
 
     pub fn today() -> VNDate {
@@ -233,5 +300,17 @@ mod tests {
         let rhs = TimeDelta::new(86_400, 0).unwrap();
         let result = d.checked_add_signed(rhs).unwrap();
         assert_eq!(12, result.solar_time.day());
+    }
+
+    #[test]
+    fn format_test() {
+        // Sun, 11 Sep 2022 18:34:48 UTC
+        let nanos: i64 = 1662921288_000_000_000;
+        let solar_time = DateTime::from_timestamp_nanos(nanos);
+        let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
+        assert_eq!("2022-07-11".to_string(), d.format(Some("%y-%m-%d")));
+        assert_eq!("2022-07-11".to_string(), d.format(Some("yyy-mm-dd")));
+        assert_eq!("11/07/2022".to_string(), d.format(Some("%d/%m/%y")));
+        assert_eq!("2022/07/11".to_string(), d.format(Some("yyy/mm/dd")));
     }
 }

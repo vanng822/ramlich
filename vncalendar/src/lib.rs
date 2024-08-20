@@ -2,7 +2,6 @@ use chrono::{DateTime, Days, TimeZone, Utc};
 use std::collections::HashMap;
 use std::fmt;
 use time::VNDate;
-
 pub mod time;
 
 pub const TIME_ZONE_OFFSET: i64 = 7;
