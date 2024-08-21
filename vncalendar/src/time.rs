@@ -11,7 +11,7 @@ pub struct VNDate {
     time_zone_offset: i64,
 }
 
-const standard_error: &str = "Invalid date format, should be similar as yyyy-mm-dd or %y-%m-%d";
+const STANDARD_ERROR: &str = "Invalid date format, should be similar as yyyy-mm-dd or %y-%m-%d";
 
 impl VNDate {
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
@@ -124,7 +124,7 @@ impl VNDate {
             if parts.len() != 3 {
                 parts = s.split('/').collect();
                 if parts.len() != 3 {
-                    return Err(standard_error);
+                    return Err(STANDARD_ERROR);
                 }
                 separator = "/";
             }
@@ -151,12 +151,12 @@ impl VNDate {
             };
 
             if !correct_syntax {
-                return Err(standard_error);
+                return Err(STANDARD_ERROR);
             }
 
             return match reverse {
                 true => Ok(format!(
-                    "{1:02}{0}{2:02}{0}{3:02}",
+                    "{1:02}{0}{2:02}{0}{3}",
                     separator,
                     self.day(),
                     self.month(),
@@ -325,6 +325,6 @@ mod tests {
             d.format(Some("yyyy/mm/dd")).unwrap()
         );
         let error = d.format(Some("y-m-d")).unwrap_err();
-        assert_eq!(standard_error, error);
+        assert_eq!(STANDARD_ERROR, error);
     }
 }
