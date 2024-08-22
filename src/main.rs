@@ -11,6 +11,9 @@ fn main() {
     println!("{}", dd.with_solar_month(10).unwrap());
     println!("{}", dd.with_solar_day(28).unwrap());
     println!("{}", dd.add_solar_date(1, 0, 0));
-    let dd2 = vncalendar::time::VNDate::new(dd.get_solar_datetime(), vncalendar::TIME_ZONE_OFFSET);
+    let dd2 = vncalendar::time::VNDate::new_by_vietnamese_tz(
+        dd.get_solar_datetime(),
+        vncalendar::TIME_ZONE_OFFSET,
+    );
     assert!(dd == dd2);
 }

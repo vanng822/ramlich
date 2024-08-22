@@ -1,20 +1,26 @@
 extern crate amlich;
 use std::fmt::{self};
 
-use chrono::{DateTime, Datelike, Days, Duration, Months, TimeDelta, Utc};
+use chrono::{DateTime, Datelike, Days, Duration, FixedOffset, Months, TimeDelta, Utc};
 
 use super::TIME_ZONE_OFFSET;
 
 pub struct VNDate {
-    solar_time: DateTime<Utc>,
+    solar_time: DateTime<FixedOffset>,
     lunar_date: amlich::LunarDate,
     time_zone_offset: i64,
 }
 
 const STANDARD_ERROR: &str = "Invalid date format, should be similar as yyyy-mm-dd or %y-%m-%d";
 
+const VIETNAMESE_TIME_ZONE_OFFSET: i32 = 7 * 60 * 60;
+
 impl VNDate {
-    pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
+    pub fn new_by_vietnamese_tz(solar_time: DateTime<FixedOffset>, time_zone_offset: i64) -> Self {
+        if solar_time.timezone() != FixedOffset::east(VIETNAMESE_TIME_ZONE_OFFSET) {
+            panic!("the solar_time must have vietnamese timezone")
+        }
+
         let lunar_date = amlich::solar2lunar(
             amlich::SolarDate::new(solar_time.year(), solar_time.month(), solar_time.day()),
             time_zone_offset,
@@ -27,12 +33,21 @@ impl VNDate {
         };
     }
 
+    pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
+        let vn_solar_time =
+            solar_time.with_timezone(&FixedOffset::east(VIETNAMESE_TIME_ZONE_OFFSET));
+        return Self::new_by_vietnamese_tz(vn_solar_time, time_zone_offset);
+    }
+
     pub fn checked_add_signed(&self, rhs: TimeDelta) -> Option<VNDate> {
         let solar_time = self.solar_time.checked_add_signed(rhs);
         if solar_time == None {
             return None;
         }
-        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
+        return Some(VNDate::new_by_vietnamese_tz(
+            solar_time.unwrap(),
+            self.time_zone_offset,
+        ));
     }
 
     pub fn with_solar_year(&self, year: i32) -> Option<VNDate> {
@@ -41,7 +56,10 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
+        return Some(VNDate::new_by_vietnamese_tz(
+            solar_time.unwrap(),
+            self.time_zone_offset,
+        ));
     }
 
     pub fn with_solar_month(&self, month: u32) -> Option<VNDate> {
@@ -50,7 +68,10 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
+        return Some(VNDate::new_by_vietnamese_tz(
+            solar_time.unwrap(),
+            self.time_zone_offset,
+        ));
     }
 
     pub fn with_solar_day(&self, day: u32) -> Option<VNDate> {
@@ -59,20 +80,23 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new(solar_time.unwrap(), self.time_zone_offset));
+        return Some(VNDate::new_by_vietnamese_tz(
+            solar_time.unwrap(),
+            self.time_zone_offset,
+        ));
     }
 
     pub fn add_solar_date(&self, years: u32, months: u32, days: u64) -> VNDate {
         let years_in_months = years * 12;
         let d = self.solar_time + Months::new(months + years_in_months) + Days::new(days);
 
-        return VNDate::new(d, self.time_zone_offset);
+        return VNDate::new_by_vietnamese_tz(d, self.time_zone_offset);
     }
 
     pub fn add(&self, duration: Duration) -> VNDate {
         let d = self.solar_time + duration;
 
-        return VNDate::new(d, self.time_zone_offset);
+        return VNDate::new_by_vietnamese_tz(d, self.time_zone_offset);
     }
 
     pub fn equal(&self, other: &VNDate) -> bool {
@@ -83,7 +107,7 @@ impl VNDate {
         return self.lunar_date;
     }
 
-    pub const fn get_solar_datetime(&self) -> DateTime<Utc> {
+    pub const fn get_solar_datetime(&self) -> DateTime<FixedOffset> {
         return self.solar_time;
     }
 
@@ -208,8 +232,8 @@ mod tests {
 
     #[test]
     fn equal_op_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
 
         let d1 = VNDate::new(solar_time, TIME_ZONE_OFFSET);
@@ -221,8 +245,8 @@ mod tests {
 
     #[test]
     fn add_solar_date_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let result = VNDate::new(solar_time, TIME_ZONE_OFFSET).add_solar_date(1, 7, 40);
         assert_eq!(2024, result.solar_time.year());
@@ -232,8 +256,8 @@ mod tests {
 
     #[test]
     fn add_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let result = VNDate::new(solar_time, TIME_ZONE_OFFSET).add(TimeDelta::days(10));
         assert_eq!(2022, result.solar_time.year());
@@ -243,8 +267,8 @@ mod tests {
 
     #[test]
     fn with_solar_year_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
             .with_solar_year(2024)
@@ -256,8 +280,8 @@ mod tests {
 
     #[test]
     fn with_solar_month_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
             .with_solar_month(7)
@@ -269,8 +293,8 @@ mod tests {
 
     #[test]
     fn with_solar_day_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let result = VNDate::new(solar_time, TIME_ZONE_OFFSET)
             .with_solar_day(22)
@@ -282,8 +306,8 @@ mod tests {
 
     #[test]
     fn equal_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         let other = VNDate::new(solar_time, TIME_ZONE_OFFSET);
@@ -292,8 +316,8 @@ mod tests {
 
     #[test]
     fn checked_add_signed_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         // one day in seconds
@@ -304,8 +328,8 @@ mod tests {
 
     #[test]
     fn format_test() {
-        // Sun, 11 Sep 2022 18:34:48 UTC
-        let nanos: i64 = 1662921288_000_000_000;
+        // Sun, 11 Sep 2022 10:34:48 UTC
+        let nanos: i64 = 1662892488_000_000_000;
         let solar_time = DateTime::from_timestamp_nanos(nanos);
         let d = VNDate::new(solar_time, TIME_ZONE_OFFSET);
         assert_eq!(
