@@ -15,9 +15,13 @@ const STANDARD_ERROR: &str = "Invalid date format, should be similar as yyyy-mm-
 
 const VIETNAMESE_TIME_ZONE_OFFSET: i32 = 7 * 60 * 60;
 
+fn get_vietnamese_tz() -> FixedOffset {
+    return FixedOffset::east_opt(VIETNAMESE_TIME_ZONE_OFFSET).unwrap();
+}
+
 impl VNDate {
     pub fn new_by_vietnamese_tz(solar_time: DateTime<FixedOffset>, time_zone_offset: i64) -> Self {
-        if solar_time.timezone() != FixedOffset::east(VIETNAMESE_TIME_ZONE_OFFSET) {
+        if solar_time.timezone() != get_vietnamese_tz() {
             panic!("the solar_time must have vietnamese timezone")
         }
 
@@ -34,8 +38,7 @@ impl VNDate {
     }
 
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
-        let vn_solar_time =
-            solar_time.with_timezone(&FixedOffset::east(VIETNAMESE_TIME_ZONE_OFFSET));
+        let vn_solar_time = solar_time.with_timezone(&get_vietnamese_tz());
         return Self::new_by_vietnamese_tz(vn_solar_time, time_zone_offset);
     }
 
