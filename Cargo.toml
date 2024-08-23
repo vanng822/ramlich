@@ -1,3 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "amlich",
+    "vncalendar",
+]
+
 [package]
 name = "ramlich"
 version = "0.1.0"
