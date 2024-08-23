@@ -1,19 +1,33 @@
 extern crate amlich;
 extern crate vncalendar;
 
-fn main() {
-    let d = amlich::SolarDate::new(1, 10, 2024);
-    println!("{}-{}-{}", d.day, d.month, d.year);
-    let dd = vncalendar::time::VNDate::today();
-    println!("{}-{}-{}", dd.year(), dd.month(), dd.day());
-    println!("format:{}", dd.format(Some("dd/mm/yyyy")).unwrap());
-    println!("{}", dd.with_solar_year(2028).unwrap());
-    println!("{}", dd.with_solar_month(10).unwrap());
-    println!("{}", dd.with_solar_day(28).unwrap());
-    println!("{}", dd.add_solar_date(1, 0, 0));
-    let dd2 = vncalendar::time::VNDate::new_by_vietnamese_tz(
-        dd.get_solar_datetime(),
-        vncalendar::TIME_ZONE_OFFSET,
-    );
-    assert!(dd == dd2);
+use actix_web::{get, App, HttpResponse, HttpServer};
+
+#[get("/today")]
+async fn today() -> HttpResponse {
+    let t = vncalendar::time::VNDate::today();
+    return HttpResponse::Ok().json(t);
+}
+
+#[actix_web::main] // or #[tokio::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(today))
+        .bind(("127.0.0.1", 8181))?
+        .run()
+        .await
+}
+
+#[cfg(test)]
+mod tests {
+    use actix_web::{test, App};
+
+    use super::*;
+
+    #[actix_web::test]
+    async fn test_index_get() {
+        let app = test::init_service(App::new().service(today)).await;
+        let req = test::TestRequest::get().uri("/today").to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
+    }
 }

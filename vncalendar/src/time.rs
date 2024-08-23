@@ -2,6 +2,7 @@ extern crate amlich;
 use std::fmt::{self};
 
 use chrono::{DateTime, Datelike, Days, Duration, FixedOffset, Months, TimeDelta, Utc};
+use serde::{ser::SerializeStruct, Serialize, Serializer};
 
 use super::TIME_ZONE_OFFSET;
 
@@ -9,6 +10,23 @@ pub struct VNDate {
     solar_time: DateTime<FixedOffset>,
     lunar_date: amlich::LunarDate,
     time_zone_offset: i64,
+}
+
+impl Serialize for VNDate {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 3 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("Color", 3)?;
+        state.serialize_field("lunar", &format!("{}", self.lunar_date))?;
+        state.serialize_field(
+            "solar",
+            &format!("{}", self.get_solar_datetime().date_naive()),
+        )?;
+        state.serialize_field("is_leap", &self.lunar_date.is_leap)?;
+        state.end()
+    }
 }
 
 const STANDARD_ERROR: &str = "Invalid date format, should be similar as yyyy-mm-dd or %y-%m-%d";
