@@ -160,7 +160,7 @@ impl VNDate {
             let second = parts[1];
             let third = parts[2];
 
-            let mut correct_syntax = false;
+            let correct_syntax: bool;
             let mut reverse = false;
 
             match first {
