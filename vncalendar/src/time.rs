@@ -17,8 +17,7 @@ impl Serialize for VNDate {
     where
         S: Serializer,
     {
-        // 3 is the number of fields in the struct.
-        let mut state = serializer.serialize_struct("Color", 3)?;
+        let mut state = serializer.serialize_struct("VNDate", 3)?;
         state.serialize_field("lunar", &format!("{}", self.lunar_date))?;
         state.serialize_field(
             "solar",
