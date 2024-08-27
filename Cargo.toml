@@ -11,6 +11,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono = "0.4.26"
 amlich = { path = "amlich", version = "0.1.0" }
 vncalendar = { path = "vncalendar", version = "0.1.0" }
 actix-web = "4.9.0"
