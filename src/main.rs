@@ -121,7 +121,7 @@ mod tests {
         let body_bytes = to_bytes(resp.into_body()).await.unwrap();
         assert_eq!(
             body_bytes,
-            "{\"lunar\":\"2024-11-10\",\"solar\":\"2024-12-10\",\"is_leap\":false}"
+            "{\"data\":{\"lunar\":\"2024-11-10\",\"solar\":\"2024-12-10\",\"is_leap\":false}}"
         );
     }
 }
