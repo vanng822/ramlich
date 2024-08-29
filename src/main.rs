@@ -1,10 +1,13 @@
 extern crate amlich;
 extern crate vncalendar;
 
+use std::{borrow::Borrow, collections::HashMap};
+
 use actix_web::{get, web, App, HttpResponse, HttpServer};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use serde::{Deserialize, Serialize};
-use vncalendar::TIME_ZONE_OFFSET;
+use serde_with::serde_as;
+use vncalendar::{time::VNDate, Month, TIME_ZONE_OFFSET};
 
 #[derive(Deserialize)]
 struct LunarToSolar {
@@ -16,10 +19,15 @@ struct ErrorResponse {
     message: String,
 }
 
+#[derive(Serialize)]
+struct VNDateResponse {
+    data: VNDate,
+}
+
 #[get("/today")]
 async fn today() -> HttpResponse {
     let t = vncalendar::time::VNDate::today();
-    return HttpResponse::Ok().json(t);
+    return HttpResponse::Ok().json(VNDateResponse { data: t });
 }
 
 #[get("/lunar")]
@@ -35,15 +43,55 @@ async fn to_lunar(solar: actix_web::web::Query<LunarToSolar>) -> HttpResponse {
 
     let midday = NaiveDateTime::new(solar_date, NaiveTime::from_hms_opt(12, 0, 0).unwrap());
     let t = vncalendar::time::VNDate::new(midday.and_utc(), TIME_ZONE_OFFSET);
-    return HttpResponse::Ok().json(t);
+    return HttpResponse::Ok().json(VNDateResponse { data: t });
+}
+
+#[derive(Deserialize)]
+struct LunarToSolarDates {
+    year: i32,
+    month: Option<u32>,
+}
+
+#[derive(Serialize)]
+struct YearDatesResponse {
+    data: HashMap<String, Vec<VNDate>>,
+}
+
+#[derive(Serialize)]
+struct YearMonthDatesResponse {
+    data: Vec<VNDate>,
+}
+
+#[get("/dates")]
+async fn get_month(data: actix_web::web::Query<LunarToSolarDates>) -> HttpResponse {
+    let year = data.year;
+    if data.month != None {
+        let month = data.month.unwrap();
+        let res = vncalendar::get_month_dates(year, month);
+        let response = YearMonthDatesResponse { data: res };
+        return HttpResponse::Ok().json(response);
+    }
+
+    let res = vncalendar::get_year_month_dates(year);
+    let mut data: HashMap<String, Vec<VNDate>> = HashMap::new();
+    for (m, dates) in res.iter() {
+        data.insert(format!("{}", *m as isize), dates.to_vec());
+    }
+    let response = YearDatesResponse { data: data };
+    return HttpResponse::Ok().json(response);
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(today).service(to_lunar))
-        .bind(("127.0.0.1", 8181))?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(today)
+            .service(to_lunar)
+            .service(get_month)
+    })
+    .bind(("127.0.0.1", 8181))?
+    .run()
+    .await
 }
 
 #[cfg(test)]

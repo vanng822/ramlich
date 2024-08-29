@@ -1,4 +1,5 @@
 use chrono::{DateTime, Days, TimeZone, Utc};
+use serde::{Deserialize, Serialize, Serializer};
 use std::collections::HashMap;
 use std::fmt;
 use time::VNDate;
@@ -6,7 +7,7 @@ pub mod time;
 
 pub const TIME_ZONE_OFFSET: i64 = 7;
 
-#[derive(Hash, Eq, PartialEq, Copy, Clone, Debug)]
+#[derive(Deserialize, Hash, Eq, PartialEq, Copy, Clone, Debug)]
 pub enum Month {
     January = 1,
     February = 2,
