@@ -10,6 +10,9 @@ name = "ramlich"
 version = "0.1.0"
 edition = "2021"
 
+[target.x86_64-unknown-linux-gnu]
+linker = "x86_64-unknown-linux-gnu-gcc"
+
 [[bin]]
 edition = "2021"
 name = "apiserver"
@@ -21,5 +24,5 @@ amlich = { path = "amlich", version = "0.1.0" }
 vncalendar = { path = "vncalendar", version = "0.1.0" }
 actix-web = "4.9.0"
 serde_json = "1.0.126"
-serde = { version = "1.0.207", features = ["derive"] }
+serde = { version = "1.0.209", features = ["derive"] }
 serde_with = "3.9.0"
