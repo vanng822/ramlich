@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.26"
 amlich = { path = "../amlich", version = "0.1.0" }
-serde = { version = "1", features = ["derive"] } 
+serde = { version = "1", features = ["derive"] }

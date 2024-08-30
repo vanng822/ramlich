@@ -3,7 +3,7 @@ extern crate vncalendar;
 
 use std::{borrow::Borrow, collections::HashMap};
 
-use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_web::{get, middleware, web, App, HttpResponse, HttpServer};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
@@ -83,8 +83,11 @@ async fn get_month(data: actix_web::web::Query<LunarToSolarDates>) -> HttpRespon
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
     HttpServer::new(|| {
         App::new()
+            .wrap(middleware::Logger::default())
             .service(today)
             .service(to_lunar)
             .service(get_month)
