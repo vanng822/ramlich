@@ -3,6 +3,8 @@ mod models;
 mod requests;
 mod responses;
 
+use std::env;
+
 use actix_web::{middleware, App, HttpServer};
 use handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use utoipa::OpenApi;
@@ -12,6 +14,8 @@ use utoipa_swagger_ui::SwaggerUi;
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
+    let port = env::var("RUST_PORT").unwrap_or("8181".to_string());
+    let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());
     HttpServer::new(|| {
         App::new()
             .wrap(middleware::Logger::default())
@@ -23,7 +27,7 @@ async fn main() -> std::io::Result<()> {
             .service(lunar_route)
             .service(get_month_route)
     })
-    .bind(("127.0.0.1", 8181))?
+    .bind(format!("{}:{}", host, port))?
     .run()
     .await
 }
