@@ -4,7 +4,7 @@ mod requests;
 mod responses;
 
 use actix_web::{middleware, App, HttpServer};
-use handlers::{get_month, to_lunar, today, ApiDoc};
+use handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -19,9 +19,9 @@ async fn main() -> std::io::Result<()> {
                 SwaggerUi::new("/swagger-ui/{_:.*}")
                     .url("/api-docs/openapi.json", ApiDoc::openapi()),
             )
-            .service(today)
-            .service(to_lunar)
-            .service(get_month)
+            .service(today_route)
+            .service(lunar_route)
+            .service(get_month_route)
     })
     .bind(("127.0.0.1", 8181))?
     .run()
@@ -36,7 +36,7 @@ mod tests {
 
     #[actix_web::test]
     async fn test_today_get() {
-        let app = test::init_service(App::new().service(today)).await;
+        let app = test::init_service(App::new().service(today_route)).await;
         let req = test::TestRequest::get().uri("/today").to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_success());
@@ -44,7 +44,7 @@ mod tests {
 
     #[actix_web::test]
     async fn test_lunar_get() {
-        let app = test::init_service(App::new().service(to_lunar)).await;
+        let app = test::init_service(App::new().service(lunar_route)).await;
         let req = test::TestRequest::get()
             .uri("/lunar?solar_date=2024-12-10")
             .to_request();
@@ -56,5 +56,25 @@ mod tests {
             body_bytes,
             "{\"data\":{\"lunar\":\"2024-11-10\",\"solar\":\"2024-12-10\",\"is_leap\":false}}"
         );
+    }
+
+    #[actix_web::test]
+    async fn test_get_month_with_year() {
+        let app = test::init_service(App::new().service(get_month_route)).await;
+        let req = test::TestRequest::get()
+            .uri("/dates?year=2024")
+            .to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
+    }
+
+    #[actix_web::test]
+    async fn test_get_month_with_year_and_month() {
+        let app = test::init_service(App::new().service(get_month_route)).await;
+        let req = test::TestRequest::get()
+            .uri("/dates?year=2024&month=05")
+            .to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
     }
 }
