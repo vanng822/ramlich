@@ -2,7 +2,7 @@ extern crate amlich;
 use std::fmt::{self};
 
 use chrono::{DateTime, Datelike, Days, Duration, FixedOffset, Months, TimeDelta, Utc};
-use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
+use serde::{ser::SerializeStruct, Serialize, Serializer};
 
 use super::TIME_ZONE_OFFSET;
 

@@ -1,5 +1,5 @@
 use chrono::{DateTime, Days, TimeZone, Utc};
-use serde::{Deserialize, Serialize, Serializer};
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt;
 use time::VNDate;
