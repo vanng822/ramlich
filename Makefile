@@ -7,3 +7,6 @@ run:
 stop:
 	docker stop ramlich-run
 	docker rm ramlich-run
+
+rmi:
+	docker image rm ramlich
