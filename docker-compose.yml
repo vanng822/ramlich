@@ -1,0 +1,66 @@
+name: "ramlich"
+
+services:
+  zk:
+    image: "confluentinc/cp-zookeeper:latest"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 32182
+      ZOOKEEPER_TICK_TIME: 2000
+    expose:
+      - 32182
+    ports:
+      - 32182:32182
+    extra_hosts:
+      - "moby:127.0.0.1"
+
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zk:32182
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093,PLAINTEXT_HOST://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    expose:
+      - 29093
+    ports:
+      - 29093:29093
+    depends_on:
+      - zk
+    extra_hosts:
+      - "moby:127.0.0.1"
+    links:
+      - zk
+
+  schema:
+    image: "confluentinc/cp-schema-registry:latest"
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9093
+      SCHEMA_REGISTRY_HOST_NAME: schema
+      SCHEMA_REGISTRY_LISTENERS: http://schema:28082
+    extra_hosts:
+      - "moby:127.0.0.1"
+    ports:
+      - 28082:28082
+    links:
+      - kafka
+      - zk
+
+  kafka-ui:
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "1"
+        max-size: "5m"
+    image: provectuslabs/kafka-ui
+    ports:
+      - "8282:8080"
+    restart: always
+
+  vncalendar:
+    image: ramlich:latest
+    ports:
+      - "8181:8181"
