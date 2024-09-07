@@ -31,6 +31,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_month_route)
     })
     .bind(format!("{}:{}", host, port))?
+    .workers(2)
     .run()
     .await
 }

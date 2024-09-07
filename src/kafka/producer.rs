@@ -10,7 +10,7 @@ use super::KafkaTopic;
 
 use super::RequestEvent;
 
-pub fn kafka_producer(brokers: &str) -> Result<FutureProducer, KafkaError> {
+fn kafka_producer(brokers: &str) -> Result<FutureProducer, KafkaError> {
     ClientConfig::new()
         .set("bootstrap.servers", brokers)
         .set("message.timeout.ms", "5000")
@@ -31,7 +31,7 @@ impl KafkaProducer {
     pub async fn publish_request_event(&self, message: &RequestEvent) -> Option<KafkaError> {
         let payload = serde_json::to_string(&message).ok()?;
         info!("payload: {}", payload);
-        let rec = FutureRecord::to(&KafkaTopic::REQUEST_EVENT.as_str())
+        let rec = FutureRecord::to(&KafkaTopic::RequestEvent.as_str())
             .payload(&payload)
             .key("");
         let res = self.get_producer().send(rec, Duration::from_secs(0)).await;

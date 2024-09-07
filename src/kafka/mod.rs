@@ -1,7 +1,3 @@
-use actix_web::web::block;
-use once_cell::sync::OnceCell;
-use producer::kafka_producer;
-use rdkafka::producer::FutureProducer;
 use serde::{Deserialize, Serialize};
 
 use crate::models::RequestResult;
@@ -9,14 +5,17 @@ use crate::models::RequestResult;
 mod producer;
 pub use producer::KafkaProducer;
 
-enum KafkaTopic {
-    REQUEST_EVENT,
+mod consumer;
+pub use consumer::KafkaConsumer;
+
+pub enum KafkaTopic {
+    RequestEvent,
 }
 
 impl KafkaTopic {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
-            KafkaTopic::REQUEST_EVENT => "request_event",
+            KafkaTopic::RequestEvent => "request_event",
         }
     }
 }
