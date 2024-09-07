@@ -1,5 +1,9 @@
+use core::fmt;
+
+use chrono::NaiveTime;
 use serde::Serialize;
 use utoipa::ToSchema;
+use uuid::Uuid;
 
 #[derive(ToSchema, Serialize)]
 pub struct VNDate {
@@ -16,4 +20,15 @@ impl VNDate {
             is_leap: is_leap,
         };
     }
+}
+
+pub trait Response {
+    fn to_string(&self) -> String;
+}
+
+pub struct RequestResult {
+    pub id: Uuid,
+    pub url: String,
+    pub timestamp: i64,
+    pub response_time: i32,
 }

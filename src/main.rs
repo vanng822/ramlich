@@ -1,4 +1,5 @@
 mod handlers;
+mod kafka;
 mod models;
 mod requests;
 mod responses;
@@ -7,16 +8,18 @@ use std::env;
 
 use actix_web::{middleware, App, HttpServer};
 use handlers::{get_month_route, lunar_route, today_route, ApiDoc};
+use kafka::KafkaProducer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
+    KafkaProducer::init("localhost:29092");
 
     let port = env::var("RUST_PORT").unwrap_or("8181".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
             .service(
@@ -40,6 +43,8 @@ mod tests {
 
     #[actix_web::test]
     async fn test_today_get() {
+        KafkaProducer::init("localhost:29092");
+
         let app = test::init_service(App::new().service(today_route)).await;
         let req = test::TestRequest::get().uri("/today").to_request();
         let resp = test::call_service(&app, req).await;

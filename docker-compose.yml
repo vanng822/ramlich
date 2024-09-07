@@ -4,28 +4,28 @@ services:
   zk:
     image: "confluentinc/cp-zookeeper:latest"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 32182
+      ZOOKEEPER_CLIENT_PORT: 32181
       ZOOKEEPER_TICK_TIME: 2000
     expose:
-      - 32182
+      - 32181
     ports:
-      - 32182:32182
+      - 32181:32181
     extra_hosts:
       - "moby:127.0.0.1"
 
   kafka:
     image: "confluentinc/cp-kafka:latest"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zk:32182
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093,PLAINTEXT_HOST://localhost:29093
+      KAFKA_ZOOKEEPER_CONNECT: zk:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     expose:
-      - 29093
+      - 29092
     ports:
-      - 29093:29093
+      - 29092:29092
     depends_on:
       - zk
     extra_hosts:
@@ -38,13 +38,13 @@ services:
     depends_on:
       - kafka
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9093
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: schema
-      SCHEMA_REGISTRY_LISTENERS: http://schema:28082
+      SCHEMA_REGISTRY_LISTENERS: http://schema:28081
     extra_hosts:
       - "moby:127.0.0.1"
     ports:
-      - 28082:28082
+      - 28081:28081
     links:
       - kafka
       - zk

@@ -3,8 +3,16 @@ extern crate vncalendar;
 
 use super::date_to_response;
 
-use crate::responses::VNDateResponse;
-use actix_web::{get, HttpResponse};
+use crate::{
+    kafka::{KafkaProducer, RequestEvent},
+    models::RequestResult,
+    responses::VNDateResponse,
+};
+use actix_web::{get, web::Data, HttpRequest, HttpResponse};
+use chrono::{NaiveTime, Utc};
+use log::error;
+use rdkafka::producer::{self, FutureProducer};
+use uuid::{self, Uuid};
 
 #[utoipa::path(
     get,
@@ -14,7 +22,21 @@ use actix_web::{get, HttpResponse};
     )
 )]
 #[get("/today")]
-pub async fn today_route() -> HttpResponse {
+pub async fn today_route(request: HttpRequest) -> HttpResponse {
+    let producer = KafkaProducer::instance();
+
     let t = vncalendar::time::VNDate::today();
-    return HttpResponse::Ok().json(VNDateResponse::new(date_to_response(&t)));
+    let response = VNDateResponse::new(date_to_response(&t));
+
+    let request_event = RequestResult {
+        id: Uuid::new_v4(),
+        url: request.uri().to_string(),
+        timestamp: Utc::now().timestamp(),
+        response_time: 10,
+    };
+    let message = &RequestEvent::from(request_event);
+
+    producer.publish_request_event(message).await;
+
+    return HttpResponse::Ok().json(response);
 }
