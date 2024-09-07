@@ -13,7 +13,12 @@ edition = "2021"
 [[bin]]
 edition = "2021"
 name = "apiserver"
-path = "src/main.rs"
+path = "src/bin/apiserver.rs"
+
+[[bin]]
+edition = "2021"
+name = "event_consumer"
+path = "src/bin/event_consumer.rs"
 
 [dependencies]
 chrono = "0.4.26"

@@ -1,24 +1,22 @@
-mod handlers;
-mod kafka;
-mod models;
-mod requests;
-mod responses;
-
 use std::env;
 
 use actix_web::{middleware, App, HttpServer};
-use handlers::{get_month_route, lunar_route, today_route, ApiDoc};
-use kafka::KafkaProducer;
+use log::info;
+use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
+use ramlich::kafka::KafkaProducer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
-    KafkaProducer::init("localhost:29092");
 
     let port = env::var("RUST_PORT").unwrap_or("8181".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());
+    let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
+    info!("brokers: {}", brokers);
+
+    KafkaProducer::init(&brokers);
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())

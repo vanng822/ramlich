@@ -1,6 +1,3 @@
-use std::borrow::Borrow;
-
-use actix_web::cookie::time::Duration;
 use log::{error, info, warn};
 use once_cell::sync::OnceCell;
 use rdkafka::{
@@ -11,7 +8,6 @@ use rdkafka::{
 };
 
 fn new_consumer(brokers: &str, topics: &[String]) -> Result<StreamConsumer, KafkaError> {
-    let msg = topics.join(" ");
     let stream_consumer: StreamConsumer = ClientConfig::new()
         .set("group.id", "test-group")
         .set("bootstrap.servers", brokers)

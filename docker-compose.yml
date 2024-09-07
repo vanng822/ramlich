@@ -22,14 +22,17 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka
     expose:
       - 29092
+      - 9092
     ports:
       - 29092:29092
+      - 9092:9092
     depends_on:
       - zk
     extra_hosts:
-      - "moby:127.0.0.1"
+      - "host.docker.internal:host-gateway"
     links:
       - zk
 
@@ -42,7 +45,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema
       SCHEMA_REGISTRY_LISTENERS: http://schema:28081
     extra_hosts:
-      - "moby:127.0.0.1"
+      - "host.docker.internal:host-gateway"
     ports:
       - 28081:28081
     links:
@@ -60,7 +63,32 @@ services:
       - "8282:8080"
     restart: always
 
-  vncalendar:
+  apiserver:
     image: ramlich:latest
+    build:
+      dockerfile: Dockerfile
     ports:
       - "8181:8181"
+    depends_on:
+      - kafka
+      - schema
+    links:
+      - kafka
+      - schema
+    environment:
+      RUST_BROKERS: host.docker.internal:29092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+
+  event_consumer:
+    image: ramlich_consumer:latest
+    build:
+      dockerfile: consumer.Dockerfile
+    depends_on:
+      - kafka
+      - schema
+    links:
+      - kafka
+      - schema
+    environment:
+      RUST_BROKERS: host.docker.internal:29092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
