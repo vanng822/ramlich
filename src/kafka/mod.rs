@@ -25,7 +25,7 @@ impl KafkaTopic {
 pub struct RequestEvent {
     id: String,
     url: String,
-    timestamp: String,
+    timestamp: i64,
     response_time: i32,
 }
 
@@ -34,7 +34,7 @@ impl RequestEvent {
         return RequestEvent {
             id: request_event.id.to_string(),
             url: request_event.url,
-            timestamp: format!("{}", request_event.timestamp),
+            timestamp: request_event.timestamp,
             response_time: request_event.response_time,
         };
     }
