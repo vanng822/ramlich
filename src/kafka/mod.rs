@@ -16,7 +16,7 @@ pub enum KafkaTopic {
 impl KafkaTopic {
     pub fn as_str(&self) -> &'static str {
         match self {
-            KafkaTopic::RequestEvent => "request_event",
+            KafkaTopic::RequestEvent => "ramlich.request_event",
         }
     }
 }

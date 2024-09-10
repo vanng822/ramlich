@@ -8,10 +8,8 @@ use crate::{
     models::RequestResult,
     responses::VNDateResponse,
 };
-use actix_web::{get, web::Data, HttpRequest, HttpResponse};
-use chrono::{NaiveTime, Utc};
-use log::error;
-use rdkafka::producer::{self, FutureProducer};
+use actix_web::{get, HttpRequest, HttpResponse};
+use chrono::Utc;
 use uuid::{self, Uuid};
 
 #[utoipa::path(

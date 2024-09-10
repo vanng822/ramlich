@@ -1,5 +1,6 @@
 use confik::Configuration;
 use deadpool_postgres::{Client, Pool};
+use log::info;
 use once_cell::sync::OnceCell;
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_postgres::NoTls;
@@ -14,7 +15,7 @@ fn get_pool() -> Pool {
     return pool;
 }
 
-struct DBPool {
+pub struct DBPool {
     pool: Pool,
 }
 
@@ -42,8 +43,8 @@ impl DBPool {
 }
 
 pub async fn add_request_event(request: Request) -> Result<Request, DBError> {
-    return Ok(request);
-    /*let client: Client = DBPool::instance().get_client().await;
+    info!("add_request_event: {:#?}", request);
+    let client: Client = DBPool::instance().get_client().await;
     let _stmt = include_str!("./sql/insert_request_event.sql");
     let _stmt = _stmt.replace("$table_fields", &Request::sql_table_fields());
     let statement = client.prepare(&_stmt).await.unwrap();
@@ -57,10 +58,10 @@ pub async fn add_request_event(request: Request) -> Result<Request, DBError> {
                 &request.response_time.to_string(),
             ],
         )
-        .await?
+        .await
         .iter()
-        .map(|row| Request::from_row_ref(row).unwrap())
+        .map(|row| Request::from_row_ref(row.first().unwrap()).unwrap())
         .collect::<Vec<Request>>()
         .pop()
-        .ok_or(DBError::NotFound);*/
+        .ok_or(DBError::NotFound);
 }

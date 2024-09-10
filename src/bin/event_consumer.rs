@@ -3,11 +3,16 @@ use std::env;
 
 use log::info;
 use ramlich::event_consumer;
+use ramlich::event_consumer::db::DBPool;
 use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
 
 #[actix_web::main]
 async fn main() {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
+
+    // TODO fix postres docker
+    // DBPool::init();
+
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
 
