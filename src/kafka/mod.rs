@@ -7,6 +7,7 @@ pub use producer::KafkaProducer;
 
 mod consumer;
 pub use consumer::KafkaConsumer;
+pub use consumer::TopicHandler;
 
 pub enum KafkaTopic {
     RequestEvent,

@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
+use async_trait::async_trait;
 use log::{error, info, warn};
-use once_cell::sync::OnceCell;
 use rdkafka::{
     config::RDKafkaLogLevel,
     consumer::{Consumer, StreamConsumer},
@@ -25,16 +27,17 @@ fn new_consumer(brokers: &str, topics: &[String]) -> Result<StreamConsumer, Kafk
     Ok(stream_consumer)
 }
 
-pub struct KafkaConsumer {
-    consumer: StreamConsumer,
+#[async_trait]
+pub trait TopicHandler {
+    async fn handle(&self, topic_name: &str, payload: &str);
 }
 
-static INSTANCE: OnceCell<KafkaConsumer> = OnceCell::new();
+pub struct KafkaConsumer<'a> {
+    consumer: StreamConsumer,
+    handlers: HashMap<String, &'a dyn TopicHandler>,
+}
 
-impl KafkaConsumer {
-    fn new(consumer: StreamConsumer) -> Self {
-        return Self { consumer };
-    }
+impl KafkaConsumer<'static> {
     pub async fn consume(&self) {
         loop {
             match self.consumer.recv().await {
@@ -49,6 +52,10 @@ impl KafkaConsumer {
                     };
                     let topic_name = m.topic();
                     info!("topic_name: {}, payload: {}", topic_name, payload);
+                    let handle_fn = self.handlers.get(topic_name);
+                    if handle_fn.is_some() {
+                        handle_fn.unwrap().handle(topic_name, payload).await;
+                    }
                 }
                 Err(kafka_error) => {
                     error!("{:#?}", kafka_error);
@@ -57,20 +64,23 @@ impl KafkaConsumer {
         }
     }
 
-    pub fn instance() -> &'static KafkaConsumer {
-        return INSTANCE.get().unwrap();
-    }
+    pub fn new<'a>(
+        brokers: &str,
+        handlers: HashMap<String, &'static dyn TopicHandler>,
+    ) -> KafkaConsumer<'a> {
+        let mut topics: Vec<String> = vec![];
 
-    pub fn init(brokers: &str, topics: &[String]) -> &'static KafkaConsumer {
-        let existing = INSTANCE.get();
-        if existing.is_some() {
-            return existing.unwrap();
+        for (topic_name, _) in handlers.iter() {
+            topics.push(topic_name.to_string());
         }
 
-        let consumer = new_consumer(brokers, topics).unwrap();
-        let kafka_consumer = Self::new(consumer);
-        let _ = INSTANCE.set(kafka_consumer);
+        info!("topics: {:#?}", topics);
+        let consumer = new_consumer(brokers, &topics).unwrap();
+        let kafka_consumer = Self {
+            consumer: consumer,
+            handlers: handlers,
+        };
 
-        return Self::instance();
+        return kafka_consumer;
     }
 }
