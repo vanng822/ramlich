@@ -3,8 +3,8 @@ use std::env;
 
 use log::info;
 use ramlich::event_consumer;
-use ramlich::event_consumer::db::DBPool;
 use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
+use ramlich::postres::DBPool;
 
 #[actix_web::main]
 async fn main() {
