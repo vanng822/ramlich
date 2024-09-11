@@ -15,7 +15,7 @@ async fn main() {
         .parse()
         .unwrap();
     let db_host = env::var("RUST_DB_HOST").unwrap_or("localhost".to_string());
-    let db_user = env::var("RUST_DB_USER").unwrap_or("postgres".to_string());
+    let db_user = env::var("RUST_DB_USER").unwrap_or("ramlich".to_string());
     let db_dbname = env::var("RUST_DB_DBNAME").unwrap_or("ramlich".to_string());
     let db_passwd = env::var("RUST_DB_PASSWD").unwrap_or("1234567890".to_string());
 

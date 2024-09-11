@@ -1,3 +1,5 @@
+version: '3.1'
+
 name: "ramlich"
 
 services:
@@ -64,13 +66,11 @@ services:
     restart: always
 
   postgresql:
-    image: "postgres:15.3"
+    image: "postgres"
     volumes:
       - ./scripts/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      POSTGRES_PASSWORD: 1234567890
-      POSTGRES_USER: postgres
-      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
 

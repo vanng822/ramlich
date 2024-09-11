@@ -1,4 +1,5 @@
 use deadpool_postgres::{Client, Manager, ManagerConfig, Pool, RecyclingMethod};
+use log::info;
 use once_cell::sync::OnceCell;
 use tokio_postgres::NoTls;
 
@@ -24,7 +25,7 @@ impl DBPool {
         pg_config.host(db_host);
         pg_config.port(db_port);
         pg_config.user(db_user);
-        pg_config.password(db_passwd);
+        // pg_config.password(db_passwd);
         pg_config.dbname(db_dbname);
 
         let mgr_config = ManagerConfig {
@@ -51,6 +52,10 @@ impl DBPool {
         db_passwd: String,
         db_dbname: String,
     ) -> &'static Self {
+        info!(
+            "{}, {}, {}, {}, {}",
+            db_port, db_host, db_user, db_passwd, db_dbname
+        );
         let pool = Self::get_pool(db_port, db_host, db_user, db_passwd, db_dbname);
         let db_pool = Self::new(pool);
         let _ = INSTANCE.set(db_pool);
