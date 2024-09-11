@@ -63,6 +63,17 @@ services:
       - "8282:8080"
     restart: always
 
+  postgresql:
+    image: "postgres:15.3"
+    volumes:
+      - ./scripts/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_PASSWORD: 1234567890
+      POSTGRES_USER: postgres
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+
   apiserver:
     image: ramlich:latest
     build:
