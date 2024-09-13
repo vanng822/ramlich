@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::error::Error;
+use strum::EnumString;
 
 use crate::models::RequestResult;
 
@@ -17,6 +19,12 @@ impl KafkaTopic {
     pub fn as_str(&self) -> &'static str {
         match self {
             KafkaTopic::RequestEvent => "ramlich.request_event",
+        }
+    }
+    pub fn from_str(topic_name: &str) -> Result<KafkaTopic, Box<dyn Error>> {
+        match topic_name {
+            "ramlich.request_event" => Ok(KafkaTopic::RequestEvent),
+            _ => Err("VariantNotFound".into()),
         }
     }
 }
