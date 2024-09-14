@@ -4,8 +4,6 @@ use std::time::SystemTime;
 
 use uuid::Uuid;
 
-use crate::models::RequestResult;
-
 mod producer;
 pub use producer::KafkaProducer;
 
@@ -37,16 +35,4 @@ pub struct RequestEvent {
     pub url: String,
     pub timestamp: SystemTime,
     pub response_time: i32,
-}
-
-impl RequestEvent {
-    // should merge those one day
-    pub fn from(request_event: RequestResult) -> Self {
-        return RequestEvent {
-            id: request_event.id,
-            url: request_event.url,
-            timestamp: request_event.timestamp,
-            response_time: request_event.response_time,
-        };
-    }
 }

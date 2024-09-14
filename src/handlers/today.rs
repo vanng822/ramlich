@@ -7,7 +7,6 @@ use super::date_to_response;
 
 use crate::{
     kafka::{KafkaProducer, RequestEvent},
-    models::RequestResult,
     responses::ResponseMeta,
     responses::VNDateResponse,
 };
@@ -29,15 +28,14 @@ pub async fn today_route(request: HttpRequest) -> HttpResponse {
 
     let reqquest_event_id = Uuid::new_v4();
 
-    let request_event = RequestResult {
+    let request_event = RequestEvent {
         id: reqquest_event_id,
         url: request.uri().to_string(),
         timestamp: SystemTime::now(),
         response_time: 10,
     };
-    let message = &RequestEvent::from(request_event);
 
-    let published_result = producer.publish_request_event(message).await;
+    let published_result = producer.publish_request_event(&request_event).await;
 
     let response = if published_result != None {
         VNDateResponse::new(date_to_response(&t))
