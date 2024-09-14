@@ -1,7 +1,9 @@
 use std::env;
 
+use actix_web::middleware::from_fn;
 use actix_web::{middleware, App, HttpServer};
 use log::info;
+use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
 use utoipa::OpenApi;
@@ -20,6 +22,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
+            .wrap(from_fn(kafka_request_event_reporter))
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}")
                     .url("/api-docs/openapi.json", ApiDoc::openapi()),

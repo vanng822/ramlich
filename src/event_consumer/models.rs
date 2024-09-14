@@ -10,7 +10,7 @@ pub struct Request {
     pub id: Uuid,
     pub url: String,
     pub timestamp: SystemTime,
-    pub response_time: i32,
+    pub response_time: u32,
     pub created_at: Option<SystemTime>,
     pub updated_at: Option<SystemTime>,
 }

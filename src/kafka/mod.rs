@@ -34,5 +34,5 @@ pub struct RequestEvent {
     pub id: Uuid,
     pub url: String,
     pub timestamp: SystemTime,
-    pub response_time: i32,
+    pub response_time: u32,
 }

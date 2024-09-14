@@ -49,22 +49,24 @@ impl VNDateResponse {
 
 #[derive(ToResponse, ToSchema, Serialize)]
 pub struct YearDatesResponse {
+    meta: ResponseMeta,
     data: HashMap<String, Vec<VNDate>>,
 }
 
 impl YearDatesResponse {
-    pub fn new(data: HashMap<String, Vec<VNDate>>) -> Self {
-        return Self { data };
+    pub fn new(data: HashMap<String, Vec<VNDate>>, meta: ResponseMeta) -> Self {
+        return Self { meta, data };
     }
 }
 
 #[derive(ToResponse, ToSchema, Serialize)]
 pub struct YearMonthDatesResponse {
+    meta: ResponseMeta,
     data: Vec<VNDate>,
 }
 
 impl YearMonthDatesResponse {
-    pub fn new(data: Vec<VNDate>) -> Self {
-        return Self { data };
+    pub fn new(data: Vec<VNDate>, meta: ResponseMeta) -> Self {
+        return Self { data, meta };
     }
 }

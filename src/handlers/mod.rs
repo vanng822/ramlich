@@ -14,6 +14,8 @@ pub use dates::get_month_route;
 
 use utoipa::OpenApi;
 
+pub mod middleware;
+
 use crate::{
     models::VNDate,
     responses::{VNDateResponse, YearDatesResponse, YearMonthDatesResponse},

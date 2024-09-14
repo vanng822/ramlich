@@ -5,12 +5,13 @@ use super::converters::date_to_response;
 
 use std::collections::HashMap;
 
-use actix_web::{get, HttpResponse};
+use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
+use uuid::Uuid;
 
 use crate::{
     models::VNDate,
     requests::SolarToLunarDates,
-    responses::{YearDatesResponse, YearMonthDatesResponse},
+    responses::{ResponseMeta, YearDatesResponse, YearMonthDatesResponse},
 };
 
 #[utoipa::path(
@@ -22,7 +23,11 @@ use crate::{
     )
 )]
 #[get("/dates")]
-pub async fn get_month_route(data: actix_web::web::Query<SolarToLunarDates>) -> HttpResponse {
+pub async fn get_month_route(
+    request: HttpRequest,
+    data: actix_web::web::Query<SolarToLunarDates>,
+) -> HttpResponse {
+    let request_event_id = request.extensions().get::<Uuid>().unwrap().clone();
     let year = data.year;
     if data.month != None {
         let month = data.month.unwrap();
@@ -31,7 +36,8 @@ pub async fn get_month_route(data: actix_web::web::Query<SolarToLunarDates>) -> 
         for date in res {
             dates_reponse.push(date_to_response(&date));
         }
-        let response = YearMonthDatesResponse::new(dates_reponse);
+        let response =
+            YearMonthDatesResponse::new(dates_reponse, ResponseMeta::new(request_event_id));
         return HttpResponse::Ok().json(response);
     }
 
@@ -44,6 +50,6 @@ pub async fn get_month_route(data: actix_web::web::Query<SolarToLunarDates>) -> 
         }
         data.insert(format!("{}", *m as isize), dates_reponse);
     }
-    let response = YearDatesResponse::new(data);
+    let response = YearDatesResponse::new(data, ResponseMeta::new(request_event_id));
     return HttpResponse::Ok().json(response);
 }
