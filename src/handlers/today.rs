@@ -11,7 +11,6 @@ use crate::{
     responses::VNDateResponse,
 };
 use actix_web::{get, HttpRequest, HttpResponse};
-use chrono::Utc;
 use uuid::{self, Uuid};
 
 #[utoipa::path(

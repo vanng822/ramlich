@@ -1,5 +1,3 @@
-use std::{borrow::Borrow, error::Error};
-
 use deadpool_postgres::Client;
 use log::info;
 use tokio_pg_mapper::FromTokioPostgresRow;

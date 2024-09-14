@@ -42,7 +42,6 @@ tokio-pg-mapper = "0.2.0"
 tokio-pg-mapper-derive = "0.2.0"
 derive_more = { version = "1.0.0", features = ["full"] }
 async-trait = "0.1.82"
-strum = { version = "0.26", features = ["derive"] }
 
 [dev-dependencies]
 mockall = "0.13.0"
