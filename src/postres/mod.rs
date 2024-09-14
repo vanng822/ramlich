@@ -14,18 +14,11 @@ impl DBPool {
         return Self { pool };
     }
 
-    fn get_pool(
-        db_port: u16,
-        db_host: String,
-        db_user: String,
-        db_passwd: String,
-        db_dbname: String,
-    ) -> Pool {
+    fn get_pool(db_port: u16, db_host: String, db_user: String, db_dbname: String) -> Pool {
         let mut pg_config = tokio_postgres::Config::new();
         pg_config.host(db_host);
         pg_config.port(db_port);
         pg_config.user(db_user);
-        // pg_config.password(db_passwd);
         pg_config.dbname(db_dbname);
 
         let mgr_config = ManagerConfig {
@@ -49,14 +42,10 @@ impl DBPool {
         db_port: u16,
         db_host: String,
         db_user: String,
-        db_passwd: String,
         db_dbname: String,
     ) -> &'static Self {
-        info!(
-            "{}, {}, {}, {}, {}",
-            db_port, db_host, db_user, db_passwd, db_dbname
-        );
-        let pool = Self::get_pool(db_port, db_host, db_user, db_passwd, db_dbname);
+        info!("{}, {}, {}, {}", db_port, db_host, db_user, db_dbname);
+        let pool = Self::get_pool(db_port, db_host, db_user, db_dbname);
         let db_pool = Self::new(pool);
         let _ = INSTANCE.set(db_pool);
 

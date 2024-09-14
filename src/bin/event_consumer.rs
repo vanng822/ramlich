@@ -17,10 +17,9 @@ async fn main() {
     let db_host = env::var("RUST_DB_HOST").unwrap_or("localhost".to_string());
     let db_user = env::var("RUST_DB_USER").unwrap_or("ramlich".to_string());
     let db_dbname = env::var("RUST_DB_DBNAME").unwrap_or("ramlich".to_string());
-    let db_passwd = env::var("RUST_DB_PASSWD").unwrap_or("1234567890".to_string());
 
     // TODO fix postres docker
-    DBPool::init(db_port, db_host, db_user, db_passwd, db_dbname);
+    DBPool::init(db_port, db_host, db_user, db_dbname);
 
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
