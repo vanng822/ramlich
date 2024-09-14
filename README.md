@@ -1,10 +1,27 @@
 # ramlich
 Rust version of https://github.com/vanng822/vncalendar
+And some testing of Rust around this and different frameworks/packages
 
-# Todos
-## Kafka
-Drop some events from web and some consumer to pick up and store in SQLite
+## Build api/web/task applications
+- Solar <=> Lunar converter using actix-web
+- Swagger http://localhost:8181/swagger-ui/#/crate
+
+## Kafka & DB
+Drop some events from web and some consumer to pick up and store in Postgres
 https://docs.rs/rdkafka/latest/rdkafka/
-## Db
-Tryout simple db such as SQLite
-rusqlite https://crates.io/crates/rusqlite
+https://docs.rs/tokio-postgres/latest/tokio_postgres/
+
+## Dockerize
+Create docker for applications
+
+## Other
+- Singel instance with once_cell
+- Sending async with async-trait
+- Json with serde
+- build mod/lib/crate
+- Writting tests
+
+
+## Todos
+- Cross compiling
+- ...?
