@@ -33,8 +33,8 @@ async fn main() {
             kafka::KafkaTopic::RequestEvent.as_str().to_string(),
             handler,
         )]);
-        let consumer = KafkaConsumer::new(&brokers, handlers);
-        consumer.consume().await;
+
+        KafkaConsumer::new(&brokers, handlers).consume().await;
     });
 
     let port = env::var("RUST_PORT").unwrap_or("8585".to_string());

@@ -3,7 +3,7 @@ use utoipa::IntoParams;
 
 #[derive(IntoParams, Deserialize)]
 #[into_params(parameter_in = Query)]
-pub struct LunarToSolar {
+pub struct SolarToLunar {
     // Assume 4 digits year
     #[param(max_length = 10)]
     pub solar_date: String,
@@ -11,7 +11,7 @@ pub struct LunarToSolar {
 
 #[derive(Deserialize, IntoParams)]
 #[into_params(parameter_in = Query)]
-pub struct LunarToSolarDates {
+pub struct SolarToLunarDates {
     #[param()]
     pub year: i32,
     #[param()]

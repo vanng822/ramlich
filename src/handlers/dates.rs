@@ -9,20 +9,20 @@ use actix_web::{get, HttpResponse};
 
 use crate::{
     models::VNDate,
-    requests::LunarToSolarDates,
+    requests::SolarToLunarDates,
     responses::{YearDatesResponse, YearMonthDatesResponse},
 };
 
 #[utoipa::path(
     get,
     path = "/dates",
-    params(LunarToSolarDates),
+    params(SolarToLunarDates),
     responses(
         (status = 200, description = "List of all dates in given month", body = YearMonthDatesResponse),
     )
 )]
 #[get("/dates")]
-pub async fn get_month_route(data: actix_web::web::Query<LunarToSolarDates>) -> HttpResponse {
+pub async fn get_month_route(data: actix_web::web::Query<SolarToLunarDates>) -> HttpResponse {
     let year = data.year;
     if data.month != None {
         let month = data.month.unwrap();

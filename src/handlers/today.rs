@@ -37,10 +37,13 @@ pub async fn today_route(request: HttpRequest) -> HttpResponse {
     };
     let message = &RequestEvent::from(request_event);
 
-    let response =
-        VNDateResponse::new_with_meta(date_to_response(&t), ResponseMeta::new(reqquest_event_id));
+    let published_result = producer.publish_request_event(message).await;
 
-    producer.publish_request_event(message).await;
+    let response = if published_result != None {
+        VNDateResponse::new(date_to_response(&t));
+    } else {
+        VNDateResponse::new_with_meta(date_to_response(&t), ResponseMeta::new(reqquest_event_id));
+    };
 
     return HttpResponse::Ok().json(response);
 }
