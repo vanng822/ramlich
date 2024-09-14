@@ -21,10 +21,6 @@ impl VNDate {
     }
 }
 
-pub trait Response {
-    fn to_string(&self) -> String;
-}
-
 pub struct RequestResult {
     pub id: Uuid,
     pub url: String,

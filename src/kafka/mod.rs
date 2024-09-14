@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::time::SystemTime;
+
 use uuid::Uuid;
 
 use crate::models::RequestResult;
@@ -32,13 +33,14 @@ impl KafkaTopic {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct RequestEvent {
-    id: Uuid,
-    url: String,
-    timestamp: SystemTime,
-    response_time: i32,
+    pub id: Uuid,
+    pub url: String,
+    pub timestamp: SystemTime,
+    pub response_time: i32,
 }
 
 impl RequestEvent {
+    // should merge those one day
     pub fn from(request_event: RequestResult) -> Self {
         return RequestEvent {
             id: request_event.id,

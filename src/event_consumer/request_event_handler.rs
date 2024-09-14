@@ -1,15 +1,15 @@
 use async_trait::async_trait;
 use log::{error, info};
 
-use crate::kafka::{KafkaTopic, TopicHandler};
+use crate::kafka::{KafkaTopic, RequestEvent, TopicHandler};
 
-use super::{db::add_request_event, models::Request};
+use super::db::add_request_event;
 
 pub struct RequestEventHandler {}
 
 impl RequestEventHandler {
     async fn handle_request_event(&self, payload: &str) {
-        let request: Request = serde_json::from_str(payload).unwrap();
+        let request: RequestEvent = serde_json::from_str(payload).unwrap();
         let result = add_request_event(request).await;
         match result {
             Ok(stored_request) => info!("{:#?}", stored_request),

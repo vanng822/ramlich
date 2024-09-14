@@ -3,11 +3,11 @@ use log::info;
 use tokio_pg_mapper::FromTokioPostgresRow;
 use uuid::Uuid;
 
-use crate::postres::DBPool;
+use crate::{kafka::RequestEvent, postres::DBPool};
 
 use super::{errors::DBError, models::Request};
 
-pub async fn add_request_event(request: Request) -> Result<Uuid, DBError> {
+pub async fn add_request_event(request: RequestEvent) -> Result<Uuid, DBError> {
     info!("add_request_event: {:#?}", request);
     let client: Client = DBPool::instance().get_client().await;
     let _stmt = include_str!("./sql/insert_request_event.sql");
@@ -26,11 +26,7 @@ pub async fn add_request_event(request: Request) -> Result<Uuid, DBError> {
         .await;
 
     info!("add_request_event stored_request: {:#?}", stored_request);
-    // testing select
-    let saved_request = get_request_event(request.id).await.unwrap();
-    info!("add_request_event saved_request: {:#?}", saved_request);
-
-    return Ok(saved_request.id);
+    return Ok(request.id);
 }
 
 pub async fn get_request_event(id: Uuid) -> Result<Request, DBError> {
