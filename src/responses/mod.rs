@@ -2,8 +2,20 @@ use std::collections::HashMap;
 
 use serde::Serialize;
 use utoipa::{ToResponse, ToSchema};
+use uuid::Uuid;
 
 use crate::models::VNDate;
+
+#[derive(ToResponse, ToSchema, Serialize)]
+pub struct ResponseMeta {
+    request_event_id: Uuid,
+}
+
+impl ResponseMeta {
+    pub fn new(request_event_id: Uuid) -> Self {
+        Self { request_event_id }
+    }
+}
 
 #[derive(Serialize)]
 pub struct ErrorResponse {
@@ -18,12 +30,20 @@ impl ErrorResponse {
 
 #[derive(ToResponse, ToSchema, Serialize)]
 pub struct VNDateResponse {
+    meta: Option<ResponseMeta>,
     data: VNDate,
 }
 
 impl VNDateResponse {
     pub fn new(data: VNDate) -> Self {
-        return Self { data };
+        return Self { meta: None, data };
+    }
+
+    pub fn new_with_meta(data: VNDate, meta: ResponseMeta) -> Self {
+        return Self {
+            meta: Some(meta),
+            data,
+        };
     }
 }
 
