@@ -1,4 +1,5 @@
 use core::fmt;
+use std::time::SystemTime;
 
 use chrono::NaiveTime;
 use serde::Serialize;
@@ -29,6 +30,6 @@ pub trait Response {
 pub struct RequestResult {
     pub id: Uuid,
     pub url: String,
-    pub timestamp: i64,
+    pub timestamp: SystemTime,
     pub response_time: i32,
 }

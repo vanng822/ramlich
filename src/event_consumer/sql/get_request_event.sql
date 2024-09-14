@@ -1,0 +1,1 @@
+SELECT * FROM request_event WHERE id = $1;

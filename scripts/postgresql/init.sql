@@ -5,11 +5,11 @@ SET search_path TO public;
 CREATE DATABASE ramlich OWNER ramlich;
 
 CREATE TABLE request_event(
-    id varchar(36) NOT NULL,
-    url varchar(255) NOT NULL,
-    timestamp bigint NOT NULL,
+    id UUID NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
     response_time INTEGER NOT NULL,
-    created_at timestamp DEFAULT current_timestamp,
-    updated_at timestamp DEFAULT current_timestamp,
+    created_at TIMESTAMP DEFAULT current_timestamp,
+    updated_at TIMESTAMP DEFAULT current_timestamp,
     PRIMARY KEY(id)
 );

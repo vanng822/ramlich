@@ -1,6 +1,8 @@
 extern crate amlich;
 extern crate vncalendar;
 
+use std::time::SystemTime;
+
 use super::date_to_response;
 
 use crate::{
@@ -29,7 +31,7 @@ pub async fn today_route(request: HttpRequest) -> HttpResponse {
     let request_event = RequestResult {
         id: Uuid::new_v4(),
         url: request.uri().to_string(),
-        timestamp: Utc::now().timestamp(),
+        timestamp: SystemTime::now(),
         response_time: 10,
     };
     let message = &RequestEvent::from(request_event);

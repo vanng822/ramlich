@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+use std::time::SystemTime;
 use strum::EnumString;
 
 use crate::models::RequestResult;
@@ -33,7 +34,7 @@ impl KafkaTopic {
 pub struct RequestEvent {
     id: String,
     url: String,
-    timestamp: i64,
+    timestamp: SystemTime,
     response_time: i32,
 }
 
