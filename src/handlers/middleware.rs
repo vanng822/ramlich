@@ -33,7 +33,7 @@ pub async fn kafka_request_event_reporter(
         id: request_event_id,
         url: path,
         requested_at: requested_at,
-        response_time: response_time.num_nanoseconds().unwrap() as i64,
+        response_time: response_time.num_nanoseconds().unwrap(),
     };
     let published_result = KafkaProducer::instance()
         .publish_request_event(&request_event)
