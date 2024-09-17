@@ -1,3 +1,5 @@
+use chrono::DateTime;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::time::SystemTime;
@@ -33,6 +35,6 @@ impl KafkaTopic {
 pub struct RequestEvent {
     pub id: Uuid,
     pub url: String,
-    pub timestamp: SystemTime,
-    pub response_time: i32,
+    pub requested_at: DateTime<Utc>,
+    pub response_time: i64,
 }

@@ -54,6 +54,7 @@ impl KafkaConsumer<'static> {
                     info!("topic_name: {}, payload: {}", topic_name, payload);
                     let handle_fn = self.handlers.get(topic_name);
                     if handle_fn.is_some() {
+                        // TODO: how to handle error in the best way
                         handle_fn.unwrap().handle(topic_name, payload).await;
                     }
                 }

@@ -1,4 +1,4 @@
-use std::{str::FromStr, time::SystemTime};
+use std::str::FromStr;
 
 use actix_web::{
     body::MessageBody,
@@ -7,6 +7,7 @@ use actix_web::{
     middleware::Next,
     Error, HttpMessage,
 };
+use chrono::Utc;
 use log::{error, info};
 use uuid::Uuid;
 
@@ -19,7 +20,7 @@ pub async fn kafka_request_event_reporter(
     // pre-processing
     let request_event_id = Uuid::new_v4();
     info!("kafka_request_event_reporter: {}", request_event_id);
-    let start_time = SystemTime::now();
+    let requested_at = Utc::now();
 
     let path = req.uri().to_string();
     // Inject request_event_id for endpoint to use in response
@@ -27,12 +28,12 @@ pub async fn kafka_request_event_reporter(
 
     let response = next.call(req).await?;
 
-    let response_time = SystemTime::now().duration_since(start_time);
+    let response_time = Utc::now().signed_duration_since(requested_at);
     let request_event = RequestEvent {
         id: request_event_id,
         url: path,
-        timestamp: start_time,
-        response_time: response_time.unwrap().as_nanos() as i32,
+        requested_at: requested_at,
+        response_time: response_time.num_nanoseconds().unwrap() as i64,
     };
     let published_result = KafkaProducer::instance()
         .publish_request_event(&request_event)

@@ -1,6 +1,4 @@
-use std::time::SystemTime;
-
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
 use uuid::Uuid;
@@ -10,8 +8,8 @@ use uuid::Uuid;
 pub struct Request {
     pub id: Uuid,
     pub url: String,
-    pub timestamp: SystemTime,
-    pub response_time: i32,
-    pub created_at: Option<NaiveDateTime>,
-    pub updated_at: Option<NaiveDateTime>,
+    pub requested_at: DateTime<Utc>,
+    pub response_time: i64,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
 }

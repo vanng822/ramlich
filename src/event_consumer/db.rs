@@ -19,7 +19,7 @@ pub async fn add_request_event(request: RequestEvent) -> Result<Uuid, DBError> {
             &[
                 &request.id,
                 &request.url,
-                &request.timestamp,
+                &request.requested_at,
                 &request.response_time,
             ],
         )
