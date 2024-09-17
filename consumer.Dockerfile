@@ -20,5 +20,5 @@ RUN cargo build --bin event_consumer --release
 # not working with other slim/alpine dists
 FROM ubuntu
 COPY --from=build /build/target/release/event_consumer /bin/
-
+EXPOSE 8585
 CMD [ "/bin/event_consumer" ]
