@@ -3,6 +3,7 @@ CREATE ROLE ramlich WITH LOGIN;
 SET search_path TO public;
 
 CREATE DATABASE ramlich OWNER ramlich;
+CREATE DATABASE unleash OWNER ramlich;
 
 CREATE TABLE request_event(
     id UUID NOT NULL,
