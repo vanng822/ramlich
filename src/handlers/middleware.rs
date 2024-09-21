@@ -11,7 +11,10 @@ use chrono::Utc;
 use log::{error, info};
 use uuid::Uuid;
 
-use crate::kafka::{KafkaProducer, RequestEvent};
+use crate::{
+    kafka::{KafkaProducer, RequestEvent},
+    unleash::getunleash,
+};
 
 pub async fn kafka_request_event_reporter(
     req: ServiceRequest,
@@ -28,16 +31,28 @@ pub async fn kafka_request_event_reporter(
 
     let response = next.call(req).await?;
 
-    let response_time = Utc::now().signed_duration_since(requested_at);
-    let request_event = RequestEvent {
-        id: request_event_id,
-        url: path,
-        requested_at: requested_at,
-        response_time: response_time.num_nanoseconds().unwrap(),
+    let request_event_enabled = getunleash().is_enabled(
+        crate::unleash::UserFeatures::request_event_enabled,
+        None,
+        true,
+    );
+    info!("request_event_enabled: {}", request_event_enabled);
+
+    let published_result = if request_event_enabled {
+        let response_time = Utc::now().signed_duration_since(requested_at);
+        let request_event = RequestEvent {
+            id: request_event_id,
+            url: path,
+            requested_at: requested_at,
+            response_time: response_time.num_nanoseconds().unwrap(),
+        };
+
+        KafkaProducer::instance()
+            .publish_request_event(&request_event)
+            .await
+    } else {
+        None
     };
-    let published_result = KafkaProducer::instance()
-        .publish_request_event(&request_event)
-        .await;
 
     return if published_result != None {
         error!("Could not publish kafka event for request");

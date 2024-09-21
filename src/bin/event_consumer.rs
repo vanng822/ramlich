@@ -7,7 +7,7 @@ use ramlich::event_consumer;
 use ramlich::event_consumer::routes::get_request_event_by_id;
 use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
 use ramlich::postres::DBPool;
-use ramlich::unleash::init_client;
+use ramlich::unleash::{init_client, sync_features};
 
 #[actix_web::main]
 async fn main() {
@@ -28,6 +28,10 @@ async fn main() {
 
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
+
+    actix_web::rt::spawn(async move {
+        sync_features().await;
+    });
 
     actix_web::rt::spawn(async move {
         let handler: &dyn TopicHandler =

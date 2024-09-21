@@ -6,13 +6,13 @@ use log::info;
 use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
-use ramlich::unleash::init_client;
+use ramlich::unleash::{init_client, sync_features};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("trace"));
 
     let port = env::var("RUST_PORT").unwrap_or("8181".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());
@@ -22,6 +22,10 @@ async fn main() -> std::io::Result<()> {
     KafkaProducer::init(&brokers);
 
     init_client("apiserver").await;
+
+    actix_web::rt::spawn(async move {
+        sync_features().await;
+    });
 
     HttpServer::new(move || {
         App::new()
