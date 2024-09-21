@@ -6,6 +6,7 @@ use log::info;
 use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
+use ramlich::unleash::init_client;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -19,6 +20,9 @@ async fn main() -> std::io::Result<()> {
     info!("brokers: {}", brokers);
 
     KafkaProducer::init(&brokers);
+
+    init_client().await;
+
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())

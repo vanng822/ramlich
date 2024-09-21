@@ -42,6 +42,11 @@ tokio-pg-mapper = "0.2.0"
 tokio-pg-mapper-derive = "0.2.0"
 derive_more = { version = "1.0.0", features = ["full"] }
 async-trait = "0.1.82"
+unleash-api-client = {version="0.11.0", features=["reqwest"]}
+enum-map = "2.0.3"
+reqwest = "0.12.7"
+futures = "0.3.30"
+futures-timer = "3.0.2"
 
 [dev-dependencies]
 mockall = "0.13.0"

@@ -3,8 +3,12 @@ extern crate vncalendar;
 
 use super::date_to_response;
 
-use crate::{responses::ResponseMeta, responses::VNDateResponse};
+use crate::{
+    responses::{ResponseMeta, VNDateResponse},
+    unleash::getunleash,
+};
 use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
+use log::info;
 use uuid::{self, Uuid};
 
 #[utoipa::path(
@@ -16,6 +20,9 @@ use uuid::{self, Uuid};
 )]
 #[get("/today")]
 pub async fn today_route(request: HttpRequest) -> HttpResponse {
+    let default_feature =
+        getunleash().is_enabled(crate::unleash::UserFeatures::default, None, false);
+    info!("default_feature: {}", default_feature);
     let request_event_id = request.extensions().get::<Uuid>().unwrap().clone();
 
     let t = vncalendar::time::VNDate::today();

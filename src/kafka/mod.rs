@@ -2,7 +2,6 @@ use chrono::DateTime;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
-use std::time::SystemTime;
 
 use uuid::Uuid;
 
