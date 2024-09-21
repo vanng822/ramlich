@@ -7,10 +7,13 @@ use ramlich::event_consumer;
 use ramlich::event_consumer::routes::get_request_event_by_id;
 use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
 use ramlich::postres::DBPool;
+use ramlich::unleash::init_client;
 
 #[actix_web::main]
 async fn main() {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
+
+    init_client("event_consumer").await;
 
     let db_port: u16 = env::var("RUST_DB_PORT")
         .unwrap_or("5432".to_string())

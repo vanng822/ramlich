@@ -1,3 +1,5 @@
+use std::thread::panicking;
+
 use enum_map::Enum;
 use log::info;
 use once_cell::sync::OnceCell;
@@ -15,11 +17,11 @@ pub fn getunleash() -> &'static Client<UserFeatures, reqwest::Client> {
 #[derive(Debug, Deserialize, Serialize, Enum, Clone)]
 pub enum UserFeatures {
     default,
+    request_event,
 }
 
-pub async fn init_client() {
+pub async fn init_client(app_name: &str) {
     let api_url = "http://127.0.0.1:4242/api";
-    let app_name = "ramlich";
     let instance_id = "";
     let authorization = Some("default:development.unleash-insecure-api-token".to_string());
     let client_builder = client::ClientBuilder::default();
@@ -28,5 +30,8 @@ pub async fn init_client() {
         .unwrap();
     let result = client.register().await;
     info!("{:?}", result);
+    if result.is_err() {
+        panic!("Can not register client");
+    }
     let _ = INSTANCE.set(client);
 }

@@ -21,7 +21,7 @@ async fn main() -> std::io::Result<()> {
 
     KafkaProducer::init(&brokers);
 
-    init_client().await;
+    init_client("apiserver").await;
 
     HttpServer::new(move || {
         App::new()
