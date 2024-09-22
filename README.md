@@ -8,8 +8,12 @@ And some testing of Rust around this and different frameworks/packages
 
 ## Kafka & DB
 Drop some events from web and some consumer to pick up and store in Postgres
-https://docs.rs/rdkafka/latest/rdkafka/
-https://docs.rs/tokio-postgres/latest/tokio_postgres/
+- https://docs.rs/rdkafka/latest/rdkafka/
+- https://docs.rs/tokio-postgres/latest/tokio_postgres/
+
+## Killswitch
+Feature switch using Unleash
+- https://www.getunleash.io/
 
 ## Dockerize
 Create docker for applications
