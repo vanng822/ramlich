@@ -3,19 +3,20 @@ extern crate vncalendar;
 
 use actix_web::{get, HttpRequest, HttpResponse};
 use serde::{Deserialize, Serialize};
-use utoipa::openapi::response;
+use utoipa::{ToResponse, ToSchema};
 
-#[derive(Debug, Serialize, Deserialize)]
-struct AmLichCalendar {
+#[derive(Debug, Serialize, Deserialize, ToResponse, ToSchema)]
+pub struct AmLichCalendar {
     pub description: String,
     pub id: u32,
     pub name: String,
-    ownerId: u32,
-    privacy: u16,
+    #[serde(alias = "ownerId")]
+    pub owner_id: u32,
+    pub privacy: u16,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct AmLichCalendarResult {
+#[derive(Debug, Serialize, Deserialize, ToResponse, ToSchema)]
+pub struct AmLichCalendarResult {
     result: Vec<AmLichCalendar>,
     status: String,
 }
@@ -24,7 +25,7 @@ struct AmLichCalendarResult {
     get,
     path = "/calendar",
     responses(
-        (status = 200, description = "Convert solar date and lunar date", body = AmLichCalendar),
+        (status = 200, description = "Convert solar date and lunar date", body = AmLichCalendarResult),
     )
 )]
 #[get("/calendar")]

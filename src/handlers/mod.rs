@@ -26,7 +26,19 @@ use crate::{
 #[derive(OpenApi)]
 #[openapi(info(description = "Solar to Lunar date converter"))]
 #[openapi(
-    paths(today::today_route, lunar::lunar_route, dates::get_month_route),
-    components(schemas(VNDateResponse, YearDatesResponse, YearMonthDatesResponse, VNDate),)
+    paths(
+        today::today_route,
+        lunar::lunar_route,
+        dates::get_month_route,
+        amlich_com_proxy::amlich_com_proxy
+    ),
+    components(schemas(
+        VNDateResponse,
+        YearDatesResponse,
+        YearMonthDatesResponse,
+        VNDate,
+        amlich_com_proxy::AmLichCalendarResult,
+        amlich_com_proxy::AmLichCalendar,
+    ),)
 )]
 pub struct ApiDoc;
