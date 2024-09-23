@@ -16,6 +16,8 @@ use utoipa::OpenApi;
 
 pub mod middleware;
 
+pub mod amlich_com_proxy;
+
 use crate::{
     models::VNDate,
     responses::{VNDateResponse, YearDatesResponse, YearMonthDatesResponse},
