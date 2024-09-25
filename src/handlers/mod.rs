@@ -30,7 +30,7 @@ use crate::{
         today::today_route,
         lunar::lunar_route,
         dates::get_month_route,
-        amlich_com_proxy::amlich_com_proxy
+        amlich_com_proxy::amlich_com_calendar_proxy
     ),
     components(schemas(
         VNDateResponse,

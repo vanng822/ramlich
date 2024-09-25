@@ -1,9 +1,9 @@
 use std::env;
 
 use actix_web::middleware::from_fn;
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
 use log::info;
-use ramlich::handlers::amlich_com_proxy::amlich_com_proxy;
+use ramlich::handlers::amlich_com_proxy::{self, amlich_com_calendar_proxy, amlich_com_forward};
 use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
@@ -39,7 +39,8 @@ async fn main() -> std::io::Result<()> {
             .service(today_route)
             .service(lunar_route)
             .service(get_month_route)
-            .service(amlich_com_proxy)
+            .service(amlich_com_calendar_proxy)
+            .default_service(web::to(amlich_com_forward))
     })
     .bind(format!("{}:{}", host, port))?
     .workers(2)

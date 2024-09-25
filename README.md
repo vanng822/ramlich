@@ -22,6 +22,7 @@ Create docker for applications
 - Singel instance with once_cell
 - Sending async with async-trait
 - Json with serde
+- HTTP request, proxy with reqwest and actic-web
 - build mod/lib/crate
 - Writting tests
 
