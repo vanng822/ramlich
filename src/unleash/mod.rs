@@ -27,10 +27,8 @@ pub enum UserFeatures {
     request_event_enabled,
 }
 
-pub async fn init_client(app_name: &str) {
-    let api_url = "http://127.0.0.1:4242/api/";
+pub async fn init_client(app_name: &str, api_url: &str, authorization: Option<String>) {
     let instance_id = "";
-    let authorization = Some("default:development.unleash-insecure-api-token".to_string());
     let client_builder = client::ClientBuilder::default();
     let client = client_builder
         .into_client::<UserFeatures, reqwest::Client>(api_url, app_name, instance_id, authorization)

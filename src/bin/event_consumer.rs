@@ -13,7 +13,14 @@ use ramlich::unleash::{init_client, sync_features};
 async fn main() {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
 
-    init_client("event_consumer").await;
+    let unleash_api_url =
+        env::var("RUST_UNLEASH_API_URL").unwrap_or("http://127.0.0.1:4242/api/".to_string());
+    let unleash_authorization = Some(
+        env::var("RUST_UNLEASH_AUTHORIZATION")
+            .unwrap_or("default:development.unleash-insecure-api-token".to_string()),
+    );
+
+    init_client("event_consumer", &unleash_api_url, unleash_authorization).await;
 
     let db_port: u16 = env::var("RUST_DB_PORT")
         .unwrap_or("5432".to_string())
