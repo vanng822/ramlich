@@ -1,7 +1,13 @@
 extern crate amlich;
 extern crate vncalendar;
 
-use actix_web::{dev::PeerAddr, error, get, web, Error, HttpRequest, HttpResponse};
+use actix_web::{
+    dev::PeerAddr,
+    error, get,
+    web::{self, Buf},
+    Error, HttpRequest, HttpResponse,
+};
+use log::error;
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 use tokio_stream::{wrappers::UnboundedReceiverStream, StreamExt};
@@ -32,17 +38,30 @@ pub struct AmLichCalendarResult {
     )
 )]
 #[get("/calendar")]
-pub async fn amlich_com_calendar_proxy() -> HttpResponse {
-    let result = reqwest::get("https://am-lich.com/api/web/v1/search").await;
+pub async fn amlich_com_calendar_proxy(mut request: HttpRequest) -> HttpResponse {
+    let client = awc::Client::default();
+
+    let result = client
+        .get("https://am-lich.com/api/web/v1/search")
+        .send()
+        .await;
+
     let res = match result {
-        Ok(res) => res,
-        _ => return HttpResponse::NotFound().into(),
+        Ok(mut r) => r.body().await,
+        Err(err) => {
+            error!("get error from am-lich.com: {:?}", err);
+            return HttpResponse::NotFound().into();
+        }
     };
-    let text_res = match res.text().await {
+    let text_bytes = match res {
         Ok(text) => text,
-        _ => return HttpResponse::NotFound().into(),
+        Err(err) => {
+            error!("get error from am-lich.com: {:?}", err);
+            return HttpResponse::NotFound().into();
+        }
     };
-    let response: AmLichCalendarResult = serde_json::from_str(&text_res).unwrap();
+
+    let response: AmLichCalendarResult = serde_json::from_reader(text_bytes.reader()).unwrap();
 
     return HttpResponse::Ok().json(response);
 }
