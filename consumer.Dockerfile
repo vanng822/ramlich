@@ -20,5 +20,8 @@ RUN cargo build --bin event_consumer --release
 # not working with other slim/alpine dists
 FROM ubuntu
 COPY --from=build /build/target/release/event_consumer /bin/
+
+ENV RUST_PORT=8585
+ENV RUST_HOST=0.0.0.0
 EXPOSE 8585
 CMD [ "/bin/event_consumer" ]
