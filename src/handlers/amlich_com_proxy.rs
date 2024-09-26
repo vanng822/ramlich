@@ -38,8 +38,11 @@ pub struct AmLichCalendarResult {
     )
 )]
 #[get("/calendar")]
-pub async fn amlich_com_calendar_proxy(mut request: HttpRequest) -> HttpResponse {
-    let client = awc::Client::default();
+pub async fn amlich_com_calendar_proxy(request: HttpRequest) -> HttpResponse {
+    let mut client = awc::Client::default();
+    for (key, value) in request.headers().iter() {
+        client.headers().unwrap().append(key.clone(), value.clone());
+    }
 
     let result = client
         .get("https://am-lich.com/api/web/v1/search")
