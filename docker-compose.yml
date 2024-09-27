@@ -95,22 +95,25 @@ services:
     depends_on:
       - postgresql
     command: [ "node", "index.js" ]
-  #  apiserver:
-  #    image: ramlich:latest
-  #    build:
-  #      dockerfile: Dockerfile
-  #    ports:
-  #      - "8181:8181"
-  #    depends_on:
-  #      - kafka
-  #      - schema
-  #    links:
-  #      - kafka
-  #      - schema
-  #    environment:
-  #      RUST_BROKERS: host.docker.internal:29092
-  #      KAFKA_ADVERTISED_HOST_NAME: kafka
 
+  apiserver:
+    image: ramlich:latest
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+    depends_on:
+      - kafka
+      - schema
+      - unleashserver
+    links:
+      - kafka
+      - schema
+      - unleashserver
+    environment:
+      RUST_BROKERS: kafka:9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      RUST_UNLEASH_API_URL: http://unleashserver:4242/api/
   #event_consumer:
   #  image: ramlich_consumer:latest
   #  build:
