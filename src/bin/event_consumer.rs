@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::env;
 
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
 use log::info;
 use ramlich::event_consumer;
 use ramlich::event_consumer::routes::get_request_event_by_id;
@@ -57,6 +57,7 @@ async fn main() {
         App::new()
             .wrap(middleware::Logger::default())
             .service(get_request_event_by_id)
+            .service(web::resource("/healthcheck").to(|| async { "OK" }))
     })
     .bind(format!("{}:{}", host, port))
     .unwrap()

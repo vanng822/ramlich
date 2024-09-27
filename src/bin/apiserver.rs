@@ -8,6 +8,7 @@ use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
 use ramlich::unleash::{init_client, sync_features};
+use serde_json::json;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -46,6 +47,7 @@ async fn main() -> std::io::Result<()> {
             .service(lunar_route)
             .service(get_month_route)
             .service(amlich_com_calendar_proxy)
+            .service(web::resource("/healthcheck").to(|| async { "OK" }))
             .default_service(web::to(amlich_com_forward))
     })
     .bind(format!("{}:{}", host, port))?

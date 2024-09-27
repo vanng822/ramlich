@@ -136,7 +136,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       RUST_UNLEASH_API_URL: http://unleashserver:4242/api/
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8181/today || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:8181/healthcheck || exit 1
       interval: 1s
       timeout: 1m
       retries: 5
@@ -164,7 +164,7 @@ services:
       RUST_UNLEASH_API_URL: http://unleashserver:4242/api/
       RUST_DB_HOST: postgresql
     healthcheck:
-      test: nc -z localhost 8585 || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:8585/healthcheck || exit 1
       interval: 1s
       timeout: 1m
       retries: 5
