@@ -3,12 +3,11 @@ use std::env;
 use actix_web::middleware::from_fn;
 use actix_web::{middleware, web, App, HttpServer};
 use log::info;
-use ramlich::handlers::amlich_com_proxy::{self, amlich_com_calendar_proxy, amlich_com_forward};
+use ramlich::handlers::amlich_com_proxy::{amlich_com_calendar_proxy, amlich_com_forward};
 use ramlich::handlers::middleware::kafka_request_event_reporter;
 use ramlich::handlers::{get_month_route, lunar_route, today_route, ApiDoc};
 use ramlich::kafka::KafkaProducer;
 use ramlich::unleash::{init_client, sync_features};
-use serde_json::json;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 

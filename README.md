@@ -32,11 +32,15 @@ make build build-customer
 docker compose up
 ```
 
+```bash
+open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq -r .meta.request_event_id)
+```
+
 ## Other
 - Singel instance with once_cell
 - Sending async with async-trait
 - Json with serde
-- HTTP request, proxy with reqwest and actic-web
+- HTTP request, proxy with reqwest, awc and actic-web
 - build mod/lib/crate
 - Writting tests
 
