@@ -15,8 +15,22 @@ Drop some events from web and some consumer to pick up and store in Postgres
 Feature switch using Unleash
 - https://www.getunleash.io/
 
+```bash
+open http://localhost:4242/
+```
+username: admin
+password: unleash4all
+
 ## Dockerize
 Create docker for applications
+
+```bash
+make build build-customer
+```
+
+```bash
+docker compose up
+```
 
 ## Other
 - Singel instance with once_cell
