@@ -21,6 +21,7 @@ pub async fn add_request_event(request: RequestEvent) -> Result<Uuid, DBError> {
                 &request.url,
                 &request.requested_at,
                 &request.response_time,
+                &(request.status_code as i32),
             ],
         )
         .await;

@@ -10,6 +10,7 @@ pub struct Request {
     pub url: String,
     pub requested_at: DateTime<Utc>,
     pub response_time: i64,
+    pub status_code: i32,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
 }

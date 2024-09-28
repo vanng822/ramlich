@@ -45,6 +45,7 @@ pub async fn kafka_request_event_reporter(
             url: path,
             requested_at: requested_at,
             response_time: response_time.num_nanoseconds().unwrap(),
+            status_code: response.status().as_u16(),
         };
 
         KafkaProducer::instance()

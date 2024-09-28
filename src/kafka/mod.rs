@@ -36,4 +36,5 @@ pub struct RequestEvent {
     pub url: String,
     pub requested_at: DateTime<Utc>,
     pub response_time: i64,
+    pub status_code: u16,
 }
