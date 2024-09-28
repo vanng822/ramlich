@@ -19,6 +19,10 @@ RUN cargo build --bin apiserver --release
 
 # not working with other slim/alpine dists
 FROM ubuntu
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
+
+RUN update-ca-certificates
+
 COPY --from=build /build/target/release/apiserver /bin/
 
 ENV RUST_PORT=8181

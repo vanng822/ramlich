@@ -19,6 +19,9 @@ RUN cargo build --bin event_consumer --release
 
 # not working with other slim/alpine dists
 FROM ubuntu
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
+
+RUN update-ca-certificates
 COPY --from=build /build/target/release/event_consumer /bin/
 
 ENV RUST_PORT=8585
