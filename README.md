@@ -25,7 +25,7 @@ password: unleash4all
 Create docker for applications
 
 ```bash
-make build build-customer
+make build
 ```
 
 ```bash
