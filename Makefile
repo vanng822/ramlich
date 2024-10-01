@@ -1,4 +1,7 @@
 build:
+	make -j build-apiserver build-consumer
+
+build-apiserver:
 	docker build -t ramlich .
 
 build-consumer:
