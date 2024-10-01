@@ -46,5 +46,6 @@ open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq
 
 
 ## Todos
+- Macros
 - Cross compiling
 - ...?

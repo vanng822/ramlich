@@ -6,12 +6,7 @@ use log::info;
 use once_cell::sync::OnceCell;
 use reqwest;
 use serde::{Deserialize, Serialize};
-use unleash_api_client::{
-    api::Features,
-    client,
-    http::{self, HttpClient},
-    Client,
-};
+use unleash_api_client::{client, Client};
 
 static INSTANCE: OnceCell<Client<UserFeatures, reqwest::Client>> = OnceCell::new();
 
