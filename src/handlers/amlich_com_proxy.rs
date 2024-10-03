@@ -38,18 +38,18 @@ pub struct AmLichCalendarResult {
     )
 )]
 #[get("/calendar")]
-pub async fn amlich_com_calendar_proxy(request: HttpRequest) -> HttpResponse {
-    let mut client = awc::Client::default();
+pub async fn amlich_com_calendar_proxy(
+    request: HttpRequest,
+    client: web::Data<awc::Client>,
+) -> HttpResponse {
+    let mut req = client.get("https://am-lich.com/api/web/v1/search");
+    let headers = req.headers_mut();
+
     for (key, value) in request.headers().iter() {
-        client.headers().unwrap().append(key.clone(), value.clone());
+        headers.append(key.clone(), value.clone());
     }
 
-    let result = client
-        .get("https://am-lich.com/api/web/v1/search")
-        .send()
-        .await;
-
-    let res = match result {
+    let res = match req.send().await {
         Ok(mut r) => r.body().await,
         Err(err) => {
             error!("get error from am-lich.com: {:?}", err);
@@ -74,8 +74,8 @@ pub async fn amlich_com_forward(
     mut payload: web::Payload,
     method: actix_web::http::Method,
     peer_addr: Option<PeerAddr>,
+    client: web::Data<reqwest::Client>,
 ) -> Result<HttpResponse, Error> {
-    let client = reqwest::Client::default();
     let path = req.uri().path();
 
     let mut new_url = Url::parse("https://am-lich.com").unwrap();

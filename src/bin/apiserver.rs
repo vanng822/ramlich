@@ -38,6 +38,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(from_fn(kafka_request_event_reporter))
+            .app_data(web::Data::new(reqwest::Client::default()))
+            .app_data(web::Data::new(awc::Client::default()))
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}")
                     .url("/api-docs/openapi.json", ApiDoc::openapi()),
