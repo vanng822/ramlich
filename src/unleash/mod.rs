@@ -11,7 +11,9 @@ use unleash_api_client::{client, Client};
 static INSTANCE: OnceCell<Client<UserFeatures, reqwest::Client>> = OnceCell::new();
 
 pub fn getunleash() -> &'static Client<UserFeatures, reqwest::Client> {
-    return INSTANCE.get().unwrap();
+    return INSTANCE
+        .get()
+        .expect("Should have a setup of unleash client");
 }
 
 #[allow(non_camel_case_types)]
@@ -27,7 +29,7 @@ pub async fn init_client(app_name: &str, api_url: &str, authorization: Option<St
     let client_builder = client::ClientBuilder::default();
     let client = client_builder
         .into_client::<UserFeatures, reqwest::Client>(api_url, app_name, instance_id, authorization)
-        .unwrap();
+        .expect("Created unleash client");
     let result = client.register().await;
     info!("{:?}", result);
 

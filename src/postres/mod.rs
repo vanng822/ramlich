@@ -26,16 +26,19 @@ impl DBPool {
         };
         let mgr = Manager::from_config(pg_config, NoTls, mgr_config);
 
-        let pool = Pool::builder(mgr).max_size(16).build().unwrap();
+        let pool = Pool::builder(mgr)
+            .max_size(16)
+            .build()
+            .expect("db pool created");
         return pool;
     }
 
     pub fn instance() -> &'static Self {
-        return INSTANCE.get().unwrap();
+        return INSTANCE.get().expect("Instance of DBPool");
     }
 
     pub async fn get_client(&self) -> Client {
-        return self.pool.get().await.unwrap();
+        return self.pool.get().await.expect("Client from db pool");
     }
 
     pub fn init(

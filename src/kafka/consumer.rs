@@ -76,7 +76,7 @@ impl KafkaConsumer<'static> {
         }
 
         info!("topics: {:#?}", topics);
-        let consumer = new_consumer(brokers, &topics).unwrap();
+        let consumer = new_consumer(brokers, &topics).expect("StreamConsumer created");
         let kafka_consumer = Self {
             consumer: consumer,
             handlers: handlers,

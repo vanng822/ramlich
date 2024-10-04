@@ -48,7 +48,7 @@ impl KafkaProducer {
     }
 
     pub fn instance() -> &'static KafkaProducer {
-        return INSTANCE.get().unwrap();
+        return INSTANCE.get().expect("KafkaProducer instance");
     }
 
     pub fn init(brokers: &str) -> &'static KafkaProducer {
@@ -57,7 +57,7 @@ impl KafkaProducer {
             return existing.unwrap();
         }
 
-        let producer: FutureProducer = kafka_producer(brokers).unwrap();
+        let producer: FutureProducer = kafka_producer(brokers).expect("FutureProducer created");
         let kafka_producer = Self { producer: producer };
         let _ = INSTANCE.set(kafka_producer);
 
