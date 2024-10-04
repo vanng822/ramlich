@@ -49,15 +49,25 @@ pub async fn get_request_event(id: Uuid) -> Result<Request, DBError> {
     info!("get_request_event: {:#?}", id);
     let client: Client = DBPool::instance().get_client().await;
     let _stmt = prepare_statement_query!("./sql/get_request_event.sql");
-    let statement = client.prepare(&_stmt).await.unwrap();
-    let request = client
-        .query(&statement, &[&id])
-        .await
-        .unwrap()
-        .get(0)
-        .map(|row| Request::from_row_ref(row))
-        .unwrap()
-        .unwrap(); // TODO: map error
+    let statement = client.prepare(&_stmt).await;
+    if statement.is_err() {
+        return Err(DBError::PrepareStatement);
+    }
+    let row = client.query(&statement.unwrap(), &[&id]).await;
 
-    return Ok(request);
+    if row.is_err() {
+        return Err(DBError::NotFound);
+    }
+
+    let request = row.unwrap().get(0).map(|row| Request::from_row_ref(row));
+
+    if request.is_none() {
+        return Err(DBError::NotFound);
+    }
+
+    let event_request = request.unwrap();
+    return match event_request {
+        Ok(result) => Ok(result),
+        Err(_) => Err(DBError::NotFound),
+    };
 }
