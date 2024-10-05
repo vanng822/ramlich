@@ -61,15 +61,16 @@ impl VNDate {
         return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
 
+    fn with_solar_time(&self, solar_time: DateTime<FixedOffset>) -> VNDate {
+        return VNDate::new_by_vietnamese_tz(solar_time, self.time_zone_offset);
+    }
+
     pub fn checked_add_signed(&self, rhs: TimeDelta) -> Option<VNDate> {
         let solar_time = self.solar_time.checked_add_signed(rhs);
         if solar_time == None {
             return None;
         }
-        return Some(VNDate::new_by_vietnamese_tz(
-            solar_time.unwrap(),
-            self.time_zone_offset,
-        ));
+        return Some(self.with_solar_time(solar_time.unwrap()));
     }
 
     pub fn with_solar_year(&self, year: i32) -> Option<VNDate> {
@@ -78,10 +79,7 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new_by_vietnamese_tz(
-            solar_time.unwrap(),
-            self.time_zone_offset,
-        ));
+        return Some(self.with_solar_time(solar_time.unwrap()));
     }
 
     pub fn with_solar_month(&self, month: u32) -> Option<VNDate> {
@@ -90,10 +88,7 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new_by_vietnamese_tz(
-            solar_time.unwrap(),
-            self.time_zone_offset,
-        ));
+        return Some(self.with_solar_time(solar_time.unwrap()));
     }
 
     pub fn with_solar_day(&self, day: u32) -> Option<VNDate> {
@@ -102,10 +97,7 @@ impl VNDate {
             return None;
         }
 
-        return Some(VNDate::new_by_vietnamese_tz(
-            solar_time.unwrap(),
-            self.time_zone_offset,
-        ));
+        return Some(self.with_solar_time(solar_time.unwrap()));
     }
 
     pub fn add_solar_date(&self, years: u32, months: u32, days: u64) -> VNDate {
