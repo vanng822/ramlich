@@ -43,9 +43,9 @@ open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq
 - HTTP request, proxy with reqwest, awc and actic-web
 - build mod/lib/crate
 - Writting tests
+- Macros, Inline
 
 
 ## Todos
-- Macros
 - Cross compiling
 - ...?
