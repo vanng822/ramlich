@@ -1,7 +1,7 @@
 use chrono::{DateTime, Days, TimeZone, Utc};
 use serde::Deserialize;
 use std::collections::HashMap;
-use std::fmt;
+use std::fmt::{self, Debug};
 use time::VNDate;
 pub mod time;
 
@@ -21,6 +21,20 @@ pub enum Month {
     October = 10,
     November = 11,
     December = 12,
+}
+
+impl TryFrom<u16> for Month {
+    // Simple error
+    type Error = &'static str;
+
+    fn try_from(value: u16) -> Result<Self, Self::Error> {
+        if 0 < value && value < 13 {
+            // zero index
+            Ok(*MONTHS.get((value - 1) as usize).unwrap())
+        } else {
+            Err("Range must be between 1-12")
+        }
+    }
 }
 
 impl fmt::Display for Month {
@@ -44,8 +58,9 @@ pub const MONTHS: [Month; 12] = [
     Month::December,
 ];
 
-pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
+pub fn get_month_dates(year: i32, month: Month) -> Vec<VNDate> {
     let mut dates: Vec<VNDate> = vec![];
+    let month = month as u32;
 
     let start: DateTime<Utc> = Utc.with_ymd_and_hms(year, month, 1, 12, 0, 0).unwrap();
 
@@ -70,7 +85,7 @@ pub fn get_month_dates(year: i32, month: u32) -> Vec<VNDate> {
 pub fn get_year_month_dates(year: i32) -> HashMap<Month, Vec<VNDate>> {
     let mut result: HashMap<Month, Vec<VNDate>> = HashMap::new();
     for m in MONTHS {
-        result.insert(m, get_month_dates(year, m as u32));
+        result.insert(m, get_month_dates(year, m));
     }
 
     return result;
@@ -83,10 +98,10 @@ mod tests {
 
     #[test]
     fn get_month_dates_test() {
-        assert_eq!(31, get_month_dates(2016, 7).len());
-        assert_eq!(29, get_month_dates(2016, 2).len());
-        assert_eq!(28, get_month_dates(2017, 2).len());
-        assert_eq!(29, get_month_dates(2024, 2).len());
+        assert_eq!(31, get_month_dates(2016, Month::July).len());
+        assert_eq!(29, get_month_dates(2016, Month::February).len());
+        assert_eq!(28, get_month_dates(2017, Month::February).len());
+        assert_eq!(29, get_month_dates(2024, Month::February).len());
     }
 
     #[test]

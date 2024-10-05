@@ -15,5 +15,5 @@ pub struct SolarToLunarDates {
     #[param()]
     pub year: i32,
     #[param()]
-    pub month: Option<u32>,
+    pub month: Option<u16>,
 }

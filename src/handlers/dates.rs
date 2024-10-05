@@ -6,11 +6,12 @@ use super::converters::date_to_response;
 use std::collections::HashMap;
 
 use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
+use vncalendar::Month;
 
 use crate::{
     models::{RequestEventId, VNDate},
     requests::SolarToLunarDates,
-    responses::{ResponseMeta, YearDatesResponse, YearMonthDatesResponse},
+    responses::{ErrorResponse, ResponseMeta, YearDatesResponse, YearMonthDatesResponse},
 };
 
 #[utoipa::path(
@@ -33,8 +34,14 @@ pub async fn get_month_route(
         .clone();
     let year = data.year;
     if data.month != None {
-        let month = data.month.unwrap();
-        let res = vncalendar::get_month_dates(year, month);
+        let month = Month::try_from(data.month.unwrap());
+
+        if month.is_err() {
+            return HttpResponse::BadRequest()
+                .json(ErrorResponse::new(month.unwrap_err().to_string()));
+        }
+
+        let res = vncalendar::get_month_dates(year, month.unwrap());
         let mut dates_reponse: Vec<VNDate> = Vec::new();
         for date in res {
             dates_reponse.push(date_to_response(&date));
