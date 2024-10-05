@@ -9,6 +9,7 @@ use actix_web::{
 };
 use chrono::Utc;
 use log::{error, info};
+use uuid::Uuid;
 
 use crate::{
     kafka::{KafkaProducer, RequestEvent},
@@ -21,7 +22,8 @@ pub async fn kafka_request_event_reporter(
     next: Next<impl MessageBody>,
 ) -> Result<ServiceResponse<impl MessageBody>, Error> {
     // pre-processing
-    let request_event_id = RequestEventId::new();
+    let request_event_id = RequestEventId::from(Uuid::new_v4());
+
     info!("kafka_request_event_reporter: {}", request_event_id);
     let requested_at = Utc::now();
 

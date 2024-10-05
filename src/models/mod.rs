@@ -23,14 +23,14 @@ impl VNDate {
 #[derive(Display, Clone, Copy)]
 pub struct RequestEventId(pub Uuid);
 
-impl RequestEventId {
-    pub fn new() -> Self {
-        Self(Uuid::new_v4())
-    }
-}
-
 impl Into<Uuid> for RequestEventId {
     fn into(self) -> Uuid {
         self.0
+    }
+}
+
+impl From<Uuid> for RequestEventId {
+    fn from(value: Uuid) -> RequestEventId {
+        Self(value)
     }
 }
