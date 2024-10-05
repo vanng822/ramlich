@@ -4,7 +4,7 @@ use serde::Serialize;
 use utoipa::{ToResponse, ToSchema};
 use uuid::Uuid;
 
-use crate::models::VNDate;
+use crate::models::{RequestEventId, VNDate};
 
 #[derive(ToResponse, ToSchema, Serialize)]
 pub struct ResponseMeta {
@@ -12,8 +12,10 @@ pub struct ResponseMeta {
 }
 
 impl ResponseMeta {
-    pub fn new(request_event_id: Uuid) -> Self {
-        Self { request_event_id }
+    pub fn new(request_event_id: RequestEventId) -> Self {
+        Self {
+            request_event_id: request_event_id.0,
+        }
     }
 }
 

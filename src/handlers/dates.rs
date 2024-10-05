@@ -9,7 +9,7 @@ use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
 use uuid::Uuid;
 
 use crate::{
-    models::VNDate,
+    models::{RequestEventId, VNDate},
     requests::SolarToLunarDates,
     responses::{ResponseMeta, YearDatesResponse, YearMonthDatesResponse},
 };
@@ -27,7 +27,11 @@ pub async fn get_month_route(
     request: HttpRequest,
     data: actix_web::web::Query<SolarToLunarDates>,
 ) -> HttpResponse {
-    let request_event_id = request.extensions().get::<Uuid>().unwrap().clone();
+    let request_event_id = request
+        .extensions()
+        .get::<RequestEventId>()
+        .unwrap()
+        .clone();
     let year = data.year;
     if data.month != None {
         let month = data.month.unwrap();

@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use super::date_to_response;
 
 use crate::{
+    models::RequestEventId,
     responses::{ResponseMeta, VNDateResponse},
     unleash::getunleash,
 };
@@ -37,7 +38,11 @@ pub async fn today_route(request: HttpRequest) -> HttpResponse {
     let default_feature =
         getunleash().get_variant(crate::unleash::UserFeatures::request_event, &context);
     info!("default_feature: {:#?}", default_feature);
-    let request_event_id = request.extensions().get::<Uuid>().unwrap().clone();
+    let request_event_id = request
+        .extensions()
+        .get::<RequestEventId>()
+        .unwrap()
+        .clone();
 
     let t = vncalendar::time::VNDate::today();
 

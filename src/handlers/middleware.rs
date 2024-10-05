@@ -13,6 +13,7 @@ use uuid::Uuid;
 
 use crate::{
     kafka::{KafkaProducer, RequestEvent},
+    models::RequestEventId,
     unleash::getunleash,
 };
 
@@ -21,7 +22,7 @@ pub async fn kafka_request_event_reporter(
     next: Next<impl MessageBody>,
 ) -> Result<ServiceResponse<impl MessageBody>, Error> {
     // pre-processing
-    let request_event_id = Uuid::new_v4();
+    let request_event_id = RequestEventId::new();
     info!("kafka_request_event_reporter: {}", request_event_id);
     let requested_at = Utc::now();
 
@@ -41,7 +42,7 @@ pub async fn kafka_request_event_reporter(
     let published_result = if request_event_enabled {
         let response_time = Utc::now().signed_duration_since(requested_at);
         let request_event = RequestEvent {
-            id: request_event_id,
+            id: request_event_id.into(),
             url: path,
             requested_at: requested_at,
             response_time: response_time.num_nanoseconds().unwrap(),

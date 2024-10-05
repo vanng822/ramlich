@@ -9,6 +9,7 @@ use uuid::Uuid;
 use vncalendar::TIME_ZONE_OFFSET;
 
 use crate::{
+    models::RequestEventId,
     requests::SolarToLunar,
     responses::{ErrorResponse, ResponseMeta, VNDateResponse},
 };
@@ -33,7 +34,11 @@ pub async fn lunar_route(
         Ok(solar) => solar,
     };
 
-    let request_event_id = request.extensions().get::<Uuid>().unwrap().clone();
+    let request_event_id = request
+        .extensions()
+        .get::<RequestEventId>()
+        .unwrap()
+        .clone();
 
     let midday = NaiveDateTime::new(solar_date, NaiveTime::from_hms_opt(12, 0, 0).unwrap());
     let t = vncalendar::time::VNDate::new(midday.and_utc(), TIME_ZONE_OFFSET);
