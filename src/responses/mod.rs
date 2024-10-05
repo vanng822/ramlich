@@ -38,14 +38,14 @@ pub struct VNDateResponse {
 
 impl VNDateResponse {
     pub fn new(data: VNDate) -> Self {
-        return Self { meta: None, data };
+        Self { meta: None, data }
     }
 
     pub fn new_with_meta(data: VNDate, meta: ResponseMeta) -> Self {
-        return Self {
+        Self {
             meta: Some(meta),
             data,
-        };
+        }
     }
 }
 
@@ -57,7 +57,7 @@ pub struct YearDatesResponse {
 
 impl YearDatesResponse {
     pub fn new(data: HashMap<String, Vec<VNDate>>, meta: ResponseMeta) -> Self {
-        return Self { meta, data };
+        Self { meta, data }
     }
 }
 
@@ -69,6 +69,6 @@ pub struct YearMonthDatesResponse {
 
 impl YearMonthDatesResponse {
     pub fn new(data: Vec<VNDate>, meta: ResponseMeta) -> Self {
-        return Self { data, meta };
+        Self { data, meta }
     }
 }

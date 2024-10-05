@@ -11,7 +11,7 @@ static INSTANCE: OnceCell<DBPool> = OnceCell::new();
 
 impl DBPool {
     fn new(pool: Pool) -> Self {
-        return Self { pool };
+        Self { pool }
     }
 
     fn get_pool(db_port: u16, db_host: String, db_user: String, db_dbname: String) -> Pool {
@@ -34,11 +34,11 @@ impl DBPool {
     }
 
     pub fn instance() -> &'static Self {
-        return INSTANCE.get().expect("Instance of DBPool");
+        INSTANCE.get().expect("Instance of DBPool")
     }
 
     pub async fn get_client(&self) -> Client {
-        return self.pool.get().await.expect("Client from db pool");
+        self.pool.get().await.expect("Client from db pool")
     }
 
     pub fn init(

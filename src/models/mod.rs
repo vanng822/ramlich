@@ -12,11 +12,11 @@ pub struct VNDate {
 
 impl VNDate {
     pub fn new(lunar: String, solar: String, is_leap: bool) -> Self {
-        return Self {
+        Self {
             lunar: lunar,
             solar: solar,
             is_leap: is_leap,
-        };
+        }
     }
 }
 
@@ -25,12 +25,12 @@ pub struct RequestEventId(pub Uuid);
 
 impl RequestEventId {
     pub fn new() -> Self {
-        return Self(Uuid::new_v4());
+        Self(Uuid::new_v4())
     }
 }
 
 impl Into<Uuid> for RequestEventId {
     fn into(self) -> Uuid {
-        return self.0;
+        self.0
     }
 }

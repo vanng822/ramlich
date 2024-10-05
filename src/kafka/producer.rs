@@ -24,18 +24,19 @@ pub struct KafkaProducer {
 static INSTANCE: OnceCell<KafkaProducer> = OnceCell::new();
 
 impl KafkaProducer {
+    #[inline]
     pub fn get_producer(&self) -> FutureProducer {
-        return self.producer.clone();
+        self.producer.clone()
     }
 
     pub async fn publish_request_event(&self, message: &RequestEvent) -> Option<KafkaError> {
         let payload = serde_json::to_string(&message).ok()?;
         info!("payload: {}", payload);
-        let rec = FutureRecord::to(&KafkaTopic::RequestEvent.as_str())
+        let rec = FutureRecord::to(KafkaTopic::RequestEvent.as_str())
             .payload(&payload)
             .key("");
         let res = self.get_producer().send(rec, Duration::from_secs(0)).await;
-        return match res {
+        match res {
             Ok((_, _)) => {
                 info!("publish successful");
                 None
@@ -44,7 +45,7 @@ impl KafkaProducer {
                 error!("publish failed: {}", err);
                 Some(err)
             }
-        };
+        }
     }
 
     pub fn instance() -> &'static KafkaProducer {
@@ -58,9 +59,9 @@ impl KafkaProducer {
         }
 
         let producer: FutureProducer = kafka_producer(brokers).expect("FutureProducer created");
-        let kafka_producer = Self { producer: producer };
+        let kafka_producer = Self { producer };
         let _ = INSTANCE.set(kafka_producer);
 
-        return Self::instance();
+        Self::instance()
     }
 }

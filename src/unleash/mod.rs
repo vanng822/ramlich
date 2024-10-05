@@ -11,9 +11,9 @@ use unleash_api_client::{client, Client};
 static INSTANCE: OnceCell<Client<UserFeatures, reqwest::Client>> = OnceCell::new();
 
 pub fn getunleash() -> &'static Client<UserFeatures, reqwest::Client> {
-    return INSTANCE
+    INSTANCE
         .get()
-        .expect("Should have a setup of unleash client");
+        .expect("Should have a setup of unleash client")
 }
 
 #[allow(non_camel_case_types)]
