@@ -9,7 +9,6 @@ use actix_web::{
 };
 use chrono::Utc;
 use log::{error, info};
-use uuid::Uuid;
 
 use crate::{
     kafka::{KafkaProducer, RequestEvent},

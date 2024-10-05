@@ -13,7 +13,6 @@ use crate::{
 use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
 use log::info;
 use unleash_api_client::Context;
-use uuid::{self, Uuid};
 
 #[utoipa::path(
     get,

@@ -5,7 +5,6 @@ use super::converters::date_to_response;
 
 use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-use uuid::Uuid;
 use vncalendar::TIME_ZONE_OFFSET;
 
 use crate::{

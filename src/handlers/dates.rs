@@ -6,7 +6,6 @@ use super::converters::date_to_response;
 use std::collections::HashMap;
 
 use actix_web::{get, HttpMessage, HttpRequest, HttpResponse};
-use uuid::Uuid;
 
 use crate::{
     models::{RequestEventId, VNDate},
