@@ -20,10 +20,7 @@ impl Serialize for VNDate {
     {
         let mut state = serializer.serialize_struct("VNDate", 3)?;
         state.serialize_field("lunar", &format!("{}", self.lunar_date))?;
-        state.serialize_field(
-            "solar",
-            &format!("{}", self.get_solar_datetime().date_naive()),
-        )?;
+        state.serialize_field("solar", &format!("{}", self.solar_time.date_naive()))?;
         state.serialize_field("is_leap", &self.lunar_date.is_leap)?;
         state.end()
     }
@@ -58,6 +55,10 @@ impl VNDate {
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
         let vn_solar_time = solar_time.with_timezone(&get_vietnamese_tz());
         return Self::new_by_vietnamese_tz(vn_solar_time, time_zone_offset);
+    }
+
+    pub fn today() -> VNDate {
+        return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
 
     pub fn checked_add_signed(&self, rhs: TimeDelta) -> Option<VNDate> {
@@ -122,14 +123,6 @@ impl VNDate {
 
     pub fn equal(&self, other: &VNDate) -> bool {
         return self.solar_time.eq(&other.solar_time);
-    }
-
-    pub const fn get_lunar_date(&self) -> amlich::LunarDate {
-        return self.lunar_date;
-    }
-
-    pub const fn get_solar_datetime(&self) -> DateTime<FixedOffset> {
-        return self.solar_time;
     }
 
     pub fn solar_day(&self) -> u32 {
@@ -224,10 +217,6 @@ impl VNDate {
             self.day()
         ));
     }
-
-    pub fn today() -> VNDate {
-        return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
-    }
 }
 
 impl PartialEq for VNDate {
@@ -244,6 +233,18 @@ impl fmt::Display for VNDate {
             lunar = self.lunar_date,
             solar = self.solar_time.date_naive()
         );
+    }
+}
+
+impl Into<DateTime<FixedOffset>> for VNDate {
+    fn into(self) -> DateTime<FixedOffset> {
+        return self.solar_time;
+    }
+}
+
+impl Into<amlich::LunarDate> for VNDate {
+    fn into(self) -> amlich::LunarDate {
+        return self.lunar_date;
     }
 }
 
