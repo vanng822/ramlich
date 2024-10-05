@@ -30,6 +30,7 @@ const STANDARD_ERROR: &str = "Invalid date format, should be similar as yyyy-mm-
 
 const VIETNAMESE_TIME_ZONE_OFFSET: i32 = 7 * 60 * 60;
 
+#[inline]
 fn get_vietnamese_tz() -> FixedOffset {
     return FixedOffset::east_opt(VIETNAMESE_TIME_ZONE_OFFSET).unwrap();
 }
@@ -61,10 +62,12 @@ impl VNDate {
         return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
 
+    #[inline]
     pub const fn get_lunar_date(&self) -> amlich::LunarDate {
         return self.lunar_date;
     }
 
+    #[inline]
     pub const fn get_solar_datetime(&self) -> DateTime<FixedOffset> {
         return self.solar_time;
     }
@@ -125,30 +128,37 @@ impl VNDate {
         return self.solar_time.eq(&other.solar_time);
     }
 
+    #[inline]
     pub fn solar_day(&self) -> u32 {
         return self.solar_time.day();
     }
 
+    #[inline]
     pub fn solar_month(&self) -> u32 {
         return self.solar_time.month();
     }
 
+    #[inline]
     pub fn solar_year(&self) -> i32 {
         return self.solar_time.year();
     }
 
+    #[inline]
     pub fn day(&self) -> u32 {
         return self.lunar_date.day as u32;
     }
 
+    #[inline]
     pub fn month(&self) -> u32 {
         return self.lunar_date.month as u32;
     }
 
+    #[inline]
     pub fn year(&self) -> i32 {
         return self.lunar_date.year as i32;
     }
 
+    #[inline]
     pub fn is_leap(&self) -> bool {
         return self.lunar_date.is_leap;
     }
