@@ -56,10 +56,8 @@ pub async fn kafka_request_event_reporter(
         None
     };
 
-    return if published_result != None {
-        error!("Could not publish kafka event for request");
-        Ok(response)
-    } else {
+    // None is OK
+    return if published_result.is_none() {
         let (response_req, res) = response.into_parts();
         let (mut res, body) = res.into_parts();
         let hdrs = res.headers_mut();
@@ -69,5 +67,8 @@ pub async fn kafka_request_event_reporter(
         );
         let res = res.set_body(body);
         Ok(ServiceResponse::new(response_req, res))
+    } else {
+        error!("Could not publish kafka event for request");
+        Ok(response)
     };
 }
