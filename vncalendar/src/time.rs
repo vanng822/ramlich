@@ -61,6 +61,14 @@ impl VNDate {
         return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
     }
 
+    pub const fn get_lunar_date(&self) -> amlich::LunarDate {
+        return self.lunar_date;
+    }
+
+    pub const fn get_solar_datetime(&self) -> DateTime<FixedOffset> {
+        return self.solar_time;
+    }
+
     fn with_solar_time(&self, solar_time: DateTime<FixedOffset>) -> VNDate {
         return VNDate::new_by_vietnamese_tz(solar_time, self.time_zone_offset);
     }
