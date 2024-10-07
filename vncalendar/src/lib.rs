@@ -28,12 +28,21 @@ impl TryFrom<u8> for Month {
     type Error = &'static str;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        if 0 < value && value < 13 {
-            // zero index
-            Ok(*MONTHS.get((value - 1) as usize).unwrap())
-        } else {
-            Err("Range must be between 1-12")
-        }
+        return match value {
+            1 => Ok(Month::January),
+            2 => Ok(Month::February),
+            3 => Ok(Month::March),
+            4 => Ok(Month::April),
+            5 => Ok(Month::May),
+            6 => Ok(Month::June),
+            7 => Ok(Month::July),
+            8 => Ok(Month::August),
+            9 => Ok(Month::September),
+            10 => Ok(Month::October),
+            11 => Ok(Month::November),
+            12 => Ok(Month::December),
+            _ => Err("Range must be between 1-12"),
+        };
     }
 }
 
@@ -95,6 +104,21 @@ pub fn get_year_month_dates(year: i32) -> HashMap<Month, Vec<VNDate>> {
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn try_from_test() {
+        assert_eq!(Month::January, Month::try_from(1).unwrap());
+        assert_eq!(Month::June, Month::try_from(6).unwrap());
+        assert_eq!(Month::December, Month::try_from(12).unwrap());
+        assert_eq!(
+            "Range must be between 1-12",
+            Month::try_from(13).unwrap_err()
+        );
+        assert_eq!(
+            "Range must be between 1-12",
+            Month::try_from(0).unwrap_err()
+        );
+    }
 
     #[test]
     fn get_month_dates_test() {
