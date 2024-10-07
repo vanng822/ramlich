@@ -23,11 +23,11 @@ pub enum Month {
     December = 12,
 }
 
-impl TryFrom<u16> for Month {
+impl TryFrom<u8> for Month {
     // Simple error
     type Error = &'static str;
 
-    fn try_from(value: u16) -> Result<Self, Self::Error> {
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
         if 0 < value && value < 13 {
             // zero index
             Ok(*MONTHS.get((value - 1) as usize).unwrap())

@@ -55,7 +55,7 @@ impl KafkaProducer {
     pub fn init(brokers: &str) -> &'static KafkaProducer {
         let existing = INSTANCE.get();
         if existing.is_some() {
-            return existing.unwrap();
+            return existing.expect("KafkaProducer instance");
         }
 
         let producer: FutureProducer = kafka_producer(brokers).expect("FutureProducer created");

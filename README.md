@@ -32,9 +32,11 @@ make build
 docker compose up
 ```
 
+
 ```bash
 open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq -r .meta.request_event_id)
 ```
+If all go fast you should expect some response else refresh the link!
 
 ## Other
 - Singel instance with once_cell
@@ -43,7 +45,7 @@ open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq
 - HTTP request, proxy with reqwest, awc and actic-web
 - build mod/lib/crate
 - Writting tests
-- Macros, Inline
+- Macros, Inline, Conversion
 
 
 ## Todos
