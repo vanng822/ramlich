@@ -60,7 +60,7 @@ open http://localhost:8585/request_event/$(curl http://localhost:8181/today | jq
 If all go fast you should expect some response else refresh the link!
 
 ## Other
-- Singel instance with once_cell
+- Single instance with once_cell
 - Sending async with async-trait
 - Json with serde
 - HTTP request, proxy with reqwest, awc and actic-web
