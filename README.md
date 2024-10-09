@@ -8,8 +8,8 @@ Request for /today
 ```mermaid
 sequenceDiagram
     Alice->>+APIServer: GET /today
-    APIServer->>-Alice: RequestEventId + Today Data
     APIServer->>+Kafka: Add RequestEvent
+    APIServer->>-Alice: RequestEventId + Today Data
     Kafka->>+Consumer: New RequestEvent
     Consumer->>+Postgres: Add new RequestEvent
 ```
