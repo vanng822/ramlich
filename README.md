@@ -19,6 +19,7 @@ Request for RequestEvent
 ```mermaid
 sequenceDiagram
     Alice->>+Consumer: GET /request_event/{RequestEventId}
+    Consumer->>Postgres: Fetch RequestEvent
     Consumer->>-Alice: RequestEvent
 ```
 
