@@ -2,6 +2,13 @@
 Rust version of https://github.com/vanng822/vncalendar
 And some testing of Rust around this and different frameworks/packages
 
+## Packages/Crates
+### amlich
+This contains some functions to convert solar calendar date to lunar calendar date. The main calculation is taken from the original work, granted usage only for non-profit purpose.
+
+### vncalendar
+This crate contains some utility functions for converting dates or operations on dates.
+
 ## Flows
 Request for /today
 
