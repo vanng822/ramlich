@@ -2,6 +2,26 @@
 Rust version of https://github.com/vanng822/vncalendar
 And some testing of Rust around this and different frameworks/packages
 
+## Flows
+Request for /today
+
+```mermaid
+sequenceDiagram
+    Alice->>+APIServer: GET /today
+    APIServer->>-Alice: RequestEventId + Today Data
+    APIServer->>+Kafka: Add RequestEvent
+    Kafka->>+Consumer: New RequestEvent
+    Consumer->>+Postgres: Add new RequestEvent
+```
+
+Request for RequestEvent
+
+```mermaid
+sequenceDiagram
+    Alice->>+Consumer: GET /request_event/{RequestEventId}
+    Consumer->>-Alice: RequestEvent
+```
+
 ## Build api/web/task applications
 - Solar <=> Lunar converter using actix-web
 - Swagger http://localhost:8181/swagger-ui/#/crate
