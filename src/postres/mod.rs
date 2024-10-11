@@ -26,11 +26,10 @@ impl DBPool {
         };
         let mgr = Manager::from_config(pg_config, NoTls, mgr_config);
 
-        let pool = Pool::builder(mgr)
+        Pool::builder(mgr)
             .max_size(16)
             .build()
-            .expect("db pool created");
-        return pool;
+            .expect("db pool created")
     }
 
     pub fn instance() -> &'static Self {
@@ -52,6 +51,6 @@ impl DBPool {
         let db_pool = Self::new(pool);
         let _ = INSTANCE.set(db_pool);
 
-        return Self::instance();
+        Self::instance()
     }
 }

@@ -48,5 +48,5 @@ pub async fn today_route(request: HttpRequest) -> HttpResponse {
     let response =
         VNDateResponse::new_with_meta(date_to_response(&t), ResponseMeta::new(request_event_id));
 
-    return HttpResponse::Ok().json(response);
+    HttpResponse::Ok().json(response)
 }

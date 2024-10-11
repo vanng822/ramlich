@@ -49,7 +49,7 @@ impl KafkaProducer {
     }
 
     pub fn instance() -> &'static KafkaProducer {
-        return INSTANCE.get().expect("KafkaProducer instance");
+        INSTANCE.get().expect("KafkaProducer instance")
     }
 
     pub fn init(brokers: &str) -> &'static KafkaProducer {

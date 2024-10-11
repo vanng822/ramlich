@@ -70,7 +70,7 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - "5532:5432"
     healthcheck:
       test: pg_isready -U ramlich -d ramlich || exit 1
       interval: 1s

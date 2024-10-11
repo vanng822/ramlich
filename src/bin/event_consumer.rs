@@ -23,7 +23,7 @@ async fn main() {
     init_client("event_consumer", &unleash_api_url, unleash_authorization).await;
 
     let db_port: u16 = env::var("RUST_DB_PORT")
-        .unwrap_or("5432".to_string())
+        .unwrap_or("5532".to_string())
         .parse()
         .unwrap();
     let db_host = env::var("RUST_DB_HOST").unwrap_or("localhost".to_string());

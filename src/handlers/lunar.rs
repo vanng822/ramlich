@@ -41,8 +41,9 @@ pub async fn lunar_route(
 
     let midday = NaiveDateTime::new(solar_date, NaiveTime::from_hms_opt(12, 0, 0).unwrap());
     let t = vncalendar::time::VNDate::new(midday.and_utc(), TIME_ZONE_OFFSET);
-    return HttpResponse::Ok().json(VNDateResponse::new_with_meta(
+
+    HttpResponse::Ok().json(VNDateResponse::new_with_meta(
         date_to_response(&t),
         ResponseMeta::new(request_event_id),
-    ));
+    ))
 }

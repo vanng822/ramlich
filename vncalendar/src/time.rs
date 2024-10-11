@@ -32,7 +32,7 @@ const VIETNAMESE_TIME_ZONE_OFFSET: i32 = 7 * 60 * 60;
 
 #[inline]
 fn get_vietnamese_tz() -> FixedOffset {
-    return FixedOffset::east_opt(VIETNAMESE_TIME_ZONE_OFFSET).unwrap();
+    FixedOffset::east_opt(VIETNAMESE_TIME_ZONE_OFFSET).unwrap()
 }
 
 impl VNDate {
@@ -46,34 +46,34 @@ impl VNDate {
             time_zone_offset,
         );
 
-        return Self {
+        Self {
             solar_time: solar_time,
             time_zone_offset: time_zone_offset,
             lunar_date: lunar_date,
-        };
+        }
     }
 
     pub fn new(solar_time: DateTime<Utc>, time_zone_offset: i64) -> Self {
         let vn_solar_time = solar_time.with_timezone(&get_vietnamese_tz());
-        return Self::new_by_vietnamese_tz(vn_solar_time, time_zone_offset);
+        Self::new_by_vietnamese_tz(vn_solar_time, time_zone_offset)
     }
 
     pub fn today() -> VNDate {
-        return VNDate::new(Utc::now(), TIME_ZONE_OFFSET);
+        VNDate::new(Utc::now(), TIME_ZONE_OFFSET)
     }
 
     #[inline]
     pub const fn get_lunar_date(&self) -> amlich::LunarDate {
-        return self.lunar_date;
+        self.lunar_date
     }
 
     #[inline]
     pub const fn get_solar_datetime(&self) -> DateTime<FixedOffset> {
-        return self.solar_time;
+        self.solar_time
     }
 
     fn with_solar_time(&self, solar_time: DateTime<FixedOffset>) -> VNDate {
-        return VNDate::new_by_vietnamese_tz(solar_time, self.time_zone_offset);
+        VNDate::new_by_vietnamese_tz(solar_time, self.time_zone_offset)
     }
 
     pub fn checked_add_signed(&self, rhs: TimeDelta) -> Option<VNDate> {
@@ -81,7 +81,8 @@ impl VNDate {
         if solar_time == None {
             return None;
         }
-        return Some(self.with_solar_time(solar_time.unwrap()));
+
+        Some(self.with_solar_time(solar_time.unwrap()))
     }
 
     pub fn with_solar_year(&self, year: i32) -> Option<VNDate> {
@@ -90,7 +91,7 @@ impl VNDate {
             return None;
         }
 
-        return Some(self.with_solar_time(solar_time.unwrap()));
+        Some(self.with_solar_time(solar_time.unwrap()))
     }
 
     pub fn with_solar_month(&self, month: u32) -> Option<VNDate> {
@@ -99,7 +100,7 @@ impl VNDate {
             return None;
         }
 
-        return Some(self.with_solar_time(solar_time.unwrap()));
+        Some(self.with_solar_time(solar_time.unwrap()))
     }
 
     pub fn with_solar_day(&self, day: u32) -> Option<VNDate> {
@@ -108,59 +109,59 @@ impl VNDate {
             return None;
         }
 
-        return Some(self.with_solar_time(solar_time.unwrap()));
+        Some(self.with_solar_time(solar_time.unwrap()))
     }
 
     pub fn add_solar_date(&self, years: u32, months: u32, days: u64) -> VNDate {
         let years_in_months = years * 12;
         let d = self.solar_time + Months::new(months + years_in_months) + Days::new(days);
 
-        return VNDate::new_by_vietnamese_tz(d, self.time_zone_offset);
+        VNDate::new_by_vietnamese_tz(d, self.time_zone_offset)
     }
 
     pub fn add(&self, duration: Duration) -> VNDate {
         let d = self.solar_time + duration;
 
-        return VNDate::new_by_vietnamese_tz(d, self.time_zone_offset);
+        VNDate::new_by_vietnamese_tz(d, self.time_zone_offset)
     }
 
     pub fn equal(&self, other: &VNDate) -> bool {
-        return self.solar_time.eq(&other.solar_time);
+        self.solar_time.eq(&other.solar_time)
     }
 
     #[inline]
     pub fn solar_day(&self) -> u32 {
-        return self.solar_time.day();
+        self.solar_time.day()
     }
 
     #[inline]
     pub fn solar_month(&self) -> u32 {
-        return self.solar_time.month();
+        self.solar_time.month()
     }
 
     #[inline]
     pub fn solar_year(&self) -> i32 {
-        return self.solar_time.year();
+        self.solar_time.year()
     }
 
     #[inline]
     pub fn day(&self) -> u32 {
-        return self.lunar_date.day as u32;
+        self.lunar_date.day
     }
 
     #[inline]
     pub fn month(&self) -> u32 {
-        return self.lunar_date.month as u32;
+        self.lunar_date.month
     }
 
     #[inline]
     pub fn year(&self) -> i32 {
-        return self.lunar_date.year as i32;
+        self.lunar_date.year
     }
 
     #[inline]
     pub fn is_leap(&self) -> bool {
-        return self.lunar_date.is_leap;
+        self.lunar_date.is_leap
     }
 
     pub fn format(&self, fmt: Option<&str>) -> Result<String, &str> {
@@ -220,12 +221,12 @@ impl VNDate {
             };
         }
 
-        return Ok(format!(
+        Ok(format!(
             "{}-{:02}-{:02}",
             self.year(),
             self.month(),
             self.day()
-        ));
+        ))
     }
 }
 
@@ -237,24 +238,24 @@ impl PartialEq for VNDate {
 
 impl fmt::Display for VNDate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "{lunar} ({solar})",
             lunar = self.lunar_date,
             solar = self.solar_time.date_naive()
-        );
+        )
     }
 }
 
 impl Into<DateTime<FixedOffset>> for VNDate {
     fn into(self) -> DateTime<FixedOffset> {
-        return self.solar_time;
+        self.solar_time
     }
 }
 
 impl Into<amlich::LunarDate> for VNDate {
     fn into(self) -> amlich::LunarDate {
-        return self.lunar_date;
+        self.lunar_date
     }
 }
 

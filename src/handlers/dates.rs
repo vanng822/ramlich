@@ -61,5 +61,6 @@ pub async fn get_month_route(
         data.insert(format!("{}", *m as isize), dates_reponse);
     }
     let response = YearDatesResponse::new(data, ResponseMeta::new(request_event_id));
-    return HttpResponse::Ok().json(response);
+
+    HttpResponse::Ok().json(response)
 }
