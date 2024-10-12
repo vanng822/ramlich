@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{thread, time::Duration};
 
 use enum_map::Enum;
 use futures_timer::Delay;
@@ -42,7 +42,7 @@ pub async fn init_client(app_name: &str, api_url: &str, authorization: Option<St
 
 pub async fn sync_features() {
     let client = getunleash();
-
+    info!("sync_features thread id: {:?}", thread::current().id());
     futures::future::join(client.poll_for_updates(), async {
         Delay::new(Duration::from_millis(500)).await;
         println!(

@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, thread};
 
 use actix_web::{
     body::MessageBody,
@@ -24,7 +24,11 @@ pub async fn kafka_request_event_reporter(
     // pre-processing
     let request_event_id = RequestEventId::from(Uuid::new_v4());
 
-    info!("kafka_request_event_reporter: {}", request_event_id);
+    info!(
+        "kafka_request_event_reporter: {}, thread id: {:?}",
+        request_event_id,
+        thread::current().id()
+    );
     let requested_at = Utc::now();
 
     let path = req.uri().to_string();

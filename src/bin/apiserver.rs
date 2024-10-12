@@ -13,7 +13,7 @@ use utoipa_swagger_ui::SwaggerUi;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("trace"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     let port = env::var("RUST_PORT").unwrap_or("8181".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());

@@ -1,3 +1,5 @@
+use std::thread;
+
 use crate::event_consumer::db::get_request_event;
 use actix_web::{get, web, HttpResponse};
 use log::info;
@@ -5,7 +7,11 @@ use uuid::Uuid;
 
 #[get("/request_event/{id}")]
 pub async fn get_request_event_by_id(id: web::Path<Uuid>) -> HttpResponse {
-    info!("request_event id: {}", id);
+    info!(
+        "request_event id: {}, thread id: {:?}",
+        id,
+        thread::current().id()
+    );
     let request_event = get_request_event(id.into_inner()).await;
 
     return match request_event {

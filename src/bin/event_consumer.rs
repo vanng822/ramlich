@@ -1,17 +1,17 @@
 use std::collections::HashMap;
-use std::env;
+use std::{env, thread};
 
 use actix_web::{middleware, web, App, HttpServer};
 use log::info;
-use ramlich::event_consumer;
 use ramlich::event_consumer::routes::get_request_event_by_id;
+use ramlich::event_consumer::{self, run_consumer};
 use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
 use ramlich::postres::DBPool;
 use ramlich::unleash::{init_client, sync_features};
 
 #[actix_web::main]
 async fn main() {
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     let unleash_api_url =
         env::var("RUST_UNLEASH_API_URL").unwrap_or("http://127.0.0.1:4242/api/".to_string());
@@ -42,16 +42,7 @@ async fn main() {
         sync_features().await;
     });
 
-    actix_web::rt::spawn(async move {
-        let handler: &dyn TopicHandler =
-            &event_consumer::request_event_handler::RequestEventHandler {} as &dyn TopicHandler;
-        let handlers: HashMap<String, &'static dyn TopicHandler> = HashMap::from([(
-            kafka::KafkaTopic::RequestEvent.as_str().to_string(),
-            handler,
-        )]);
-
-        KafkaConsumer::new(&brokers, handlers).consume().await;
-    });
+    rt.spawn(run_consumer(brokers));
 
     let port = env::var("RUST_PORT").unwrap_or("8585".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());
