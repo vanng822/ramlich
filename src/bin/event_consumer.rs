@@ -63,7 +63,6 @@ async fn main() {
     })
     .bind(format!("{}:{}", host, port))
     .unwrap()
-    .workers(1)
     .run()
     .await;
 }

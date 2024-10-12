@@ -52,7 +52,6 @@ async fn main() -> std::io::Result<()> {
             .default_service(web::to(amlich_com_forward))
     })
     .bind(format!("{}:{}", host, port))?
-    .workers(2)
     .run()
     .await
 }
