@@ -36,7 +36,9 @@ async fn main() {
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
 
-    actix_web::rt::spawn(async move {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+
+    rt.spawn(async move {
         sync_features().await;
     });
 

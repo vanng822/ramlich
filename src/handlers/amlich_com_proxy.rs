@@ -21,7 +21,7 @@ pub struct AmLichCalendar {
     pub name: String,
     #[serde(alias = "ownerId")]
     pub owner_id: u32,
-    pub privacy: u16,
+    pub privacy: u8,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToResponse, ToSchema)]
