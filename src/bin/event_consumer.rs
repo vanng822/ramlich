@@ -1,11 +1,9 @@
-use std::collections::HashMap;
-use std::{env, thread};
+use std::env;
 
 use actix_web::{middleware, web, App, HttpServer};
 use log::info;
 use ramlich::event_consumer::routes::get_request_event_by_id;
-use ramlich::event_consumer::{self, run_consumer};
-use ramlich::kafka::{self, KafkaConsumer, TopicHandler};
+use ramlich::event_consumer::run_consumer;
 use ramlich::postres::DBPool;
 use ramlich::unleash::{init_client, sync_features};
 

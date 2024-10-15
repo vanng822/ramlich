@@ -9,7 +9,9 @@ use rdkafka::{
     ClientConfig, Message,
 };
 
-fn new_consumer(brokers: &str, topics: &[String]) -> Result<StreamConsumer, KafkaError> {
+use crate::handlers;
+
+fn new_consumer(brokers: &str, topics: Vec<&str>) -> Result<StreamConsumer, KafkaError> {
     let stream_consumer: StreamConsumer = ClientConfig::new()
         .set("group.id", "test-group")
         .set("bootstrap.servers", brokers)
@@ -19,22 +21,20 @@ fn new_consumer(brokers: &str, topics: &[String]) -> Result<StreamConsumer, Kafk
         .set("enable.auto.commit", "true")
         .set_log_level(RDKafkaLogLevel::Debug)
         .create()?;
-    let topics = topics
-        .iter()
-        .map(|topic| topic.as_str())
-        .collect::<Vec<&str>>();
-    stream_consumer.subscribe(topics.as_slice())?;
+
+        stream_consumer.subscribe(topics.as_slice())?;
     Ok(stream_consumer)
 }
 
 #[async_trait]
 pub trait TopicHandler {
-    async fn handle(&self, topic_name: &str, payload: &str);
+    fn get_topic_name(&self) -> &str;
+    async fn handle(&self, payload: &str);
 }
 
 pub struct KafkaConsumer<'a> {
     consumer: StreamConsumer,
-    handlers: HashMap<String, &'a dyn TopicHandler>,
+    handler_mappings: HashMap<&'a str, &'a dyn TopicHandler>,
 }
 
 impl KafkaConsumer<'static> {
@@ -52,10 +52,10 @@ impl KafkaConsumer<'static> {
                     };
                     let topic_name = m.topic();
                     info!("topic_name: {}, payload: {}", topic_name, payload);
-                    let handle_fn = self.handlers.get(topic_name);
-                    if handle_fn.is_some() {
+                    let handler = self.handler_mappings.get(topic_name);
+                    if handler.is_some() {
                         // TODO: how to handle error in the best way
-                        handle_fn.unwrap().handle(topic_name, payload).await;
+                        handler.unwrap().handle(payload).await;
                     }
                 }
                 Err(kafka_error) => {
@@ -67,19 +67,25 @@ impl KafkaConsumer<'static> {
 
     pub fn new<'a>(
         brokers: &str,
-        handlers: HashMap<String, &'static dyn TopicHandler>,
+        handlers: Vec<&'static dyn TopicHandler>,
     ) -> KafkaConsumer<'a> {
-        let mut topics: Vec<String> = vec![];
+        let mut topics: Vec<&str> = vec![];
+        let mut handler_mappings: HashMap<&str, &'static dyn TopicHandler> = HashMap::new();
 
-        for (topic_name, _) in handlers.iter() {
-            topics.push(topic_name.to_string());
+        for handler in handlers.iter() {
+            let topic_name = handler.get_topic_name();
+            if topics.contains(&topic_name) {
+                panic!("can only have one handler per topic, found multiple handlers for: {topic_name}");
+            }
+            topics.push(topic_name);
+            handler_mappings.insert(topic_name, handler.to_owned());
         }
 
         info!("topics: {:#?}", topics);
-        let consumer = new_consumer(brokers, &topics).expect("StreamConsumer created");
+        let consumer = new_consumer(brokers, topics).expect("StreamConsumer created");
         Self {
-            consumer: consumer,
-            handlers: handlers,
+            consumer,
+            handler_mappings,
         }
     }
 }

@@ -26,10 +26,11 @@ impl RequestEventHandler {
 
 #[async_trait]
 impl TopicHandler for RequestEventHandler {
-    async fn handle(&self, topic_name: &str, payload: &str) {
+    fn get_topic_name(&self) -> &str {
+        KafkaTopic::RequestEvent.as_str()
+    }
+    async fn handle(&self, payload: &str) {
         info!("handle thread id: {:?}", thread::current().id());
-        match KafkaTopic::from_str(topic_name).unwrap() {
-            KafkaTopic::RequestEvent => self.handle_request_event(payload).await,
-        }
+        self.handle_request_event(payload).await;
     }
 }
