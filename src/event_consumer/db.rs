@@ -39,10 +39,13 @@ pub async fn add_request_event(request: RequestEvent) -> Result<Uuid, DBError> {
                 &(request.status_code as i32),
             ],
         )
-        .await;
+        .await
+        .unwrap()
+        .get(0)
+        .map(|row| Request::from_row_ref(row))
+        .unwrap().unwrap();
 
-    info!("add_request_event stored_request: {:#?}", stored_request);
-    return Ok(request.id);
+    return Ok(stored_request.id);
 }
 
 pub async fn get_request_event(id: Uuid) -> Result<Request, DBError> {

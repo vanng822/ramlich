@@ -9,7 +9,6 @@ use rdkafka::{
     ClientConfig, Message,
 };
 
-use crate::handlers;
 
 fn new_consumer(brokers: &str, topics: Vec<&str>) -> Result<StreamConsumer, KafkaError> {
     let stream_consumer: StreamConsumer = ClientConfig::new()
@@ -56,6 +55,8 @@ impl KafkaConsumer<'static> {
                     if handler.is_some() {
                         // TODO: how to handle error in the best way
                         handler.unwrap().handle(payload).await;
+                    } else {
+                        warn!("Received message for topic: {topic_name} with no handler, payload: {payload}");
                     }
                 }
                 Err(kafka_error) => {

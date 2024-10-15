@@ -18,7 +18,7 @@ impl RequestEventHandler {
         let request: RequestEvent = serde_json::from_str(payload).unwrap();
         let result = add_request_event(request).await;
         match result {
-            Ok(stored_request) => info!("{:#?}", stored_request),
+            Ok(stored_id) => info!("stored_id: {}", stored_id),
             Err(err) => error!("{:#?}", err),
         }
     }
