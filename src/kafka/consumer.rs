@@ -9,7 +9,6 @@ use rdkafka::{
     ClientConfig, Message,
 };
 
-
 fn new_consumer(brokers: &str, topics: Vec<&str>) -> Result<StreamConsumer, KafkaError> {
     let stream_consumer: StreamConsumer = ClientConfig::new()
         .set("group.id", "test-group")
@@ -21,7 +20,7 @@ fn new_consumer(brokers: &str, topics: Vec<&str>) -> Result<StreamConsumer, Kafk
         .set_log_level(RDKafkaLogLevel::Debug)
         .create()?;
 
-        stream_consumer.subscribe(topics.as_slice())?;
+    stream_consumer.subscribe(topics.as_slice())?;
     Ok(stream_consumer)
 }
 
