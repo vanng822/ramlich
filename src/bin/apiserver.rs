@@ -20,7 +20,7 @@ async fn main() -> std::io::Result<()> {
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
 
-    KafkaProducer::init(&brokers);
+    KafkaProducer::init(&brokers.clone());
 
     let unleash_api_url =
         env::var("RUST_UNLEASH_API_URL").unwrap_or("http://127.0.0.1:4242/api/".to_string());
@@ -28,7 +28,7 @@ async fn main() -> std::io::Result<()> {
         env::var("RUST_UNLEASH_AUTHORIZATION")
             .unwrap_or("default:development.unleash-insecure-api-token".to_string()),
     );
-    init_client("apiserver", &unleash_api_url, unleash_authorization).await;
+    init_client("apiserver", &unleash_api_url.clone(), unleash_authorization.clone()).await;
 
     actix_web::rt::spawn(async move {
         sync_features().await;

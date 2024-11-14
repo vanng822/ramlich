@@ -29,7 +29,7 @@ async fn main() {
     let db_dbname = env::var("RUST_DB_DBNAME").unwrap_or("ramlich".to_string());
 
     // TODO fix postres docker
-    DBPool::init(db_port, db_host, db_user, db_dbname);
+    DBPool::init(db_port.clone(), db_host.clone(), db_user.clone(), db_dbname.clone());
 
     let brokers = env::var("RUST_BROKERS").unwrap_or("127.0.0.1:29092".to_string());
     info!("brokers: {}", brokers);
@@ -40,7 +40,7 @@ async fn main() {
         sync_features().await;
     });
 
-    rt.spawn(run_consumer(brokers));
+    rt.spawn(run_consumer(brokers.clone()));
 
     let port = env::var("RUST_PORT").unwrap_or("8585".to_string());
     let host = env::var("RUST_HOST").unwrap_or("127.0.0.1".to_string());

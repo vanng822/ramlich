@@ -18,9 +18,9 @@ fn new_consumer(brokers: &str, topics: Vec<&str>) -> Result<StreamConsumer, Kafk
         .set("session.timeout.ms", "6000")
         .set("enable.auto.commit", "true")
         .set_log_level(RDKafkaLogLevel::Debug)
-        .create()?;
+        .create().expect("Failed to create new stram consumer");
 
-    stream_consumer.subscribe(topics.as_slice())?;
+    stream_consumer.subscribe(topics.as_slice()).expect("Failed to subscribe to the topic");
     Ok(stream_consumer)
 }
 
