@@ -78,4 +78,3 @@ If all go fast you should expect some response else refresh the link!
 
 ## Todos
 - Cross compiling
-- ...?
