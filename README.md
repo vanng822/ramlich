@@ -31,7 +31,7 @@ sequenceDiagram
 ```
 
 ## Build api/web/task applications
-- Solar <=> Lunar converter using actix-web
+- Solar <=> Lunar date converter using actix-web
 - Swagger http://localhost:8181/swagger-ui/#/crate
 
 ## Kafka & DB
@@ -78,4 +78,3 @@ If all go fast you should expect some response else refresh the link!
 
 ## Todos
 - Cross compiling
-- ...?
