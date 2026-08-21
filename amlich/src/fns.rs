@@ -76,7 +76,7 @@ pub fn get_new_moon_day(k: i64, time_zone: i64) -> i64 {
 
 pub fn get_lunar_month11(yyyy: i64, time_zone: i64) -> i64 {
     let off = jd_from_date(31, 12, yyyy) - 2415021;
-    let k = (off as f64 / 29.530588853) as i64;
+    let k = (off as f64 / 29.530588853).floor() as i64;
     let mut nm = get_new_moon_day(k, time_zone);
     let sun_long = get_sun_longitude(nm, time_zone); // sun longitude at local midnight
     if sun_long >= 9 {
@@ -95,7 +95,10 @@ pub fn sun_longitude(jdn: f64) -> f64 {
     DL = DL + (0.019993 - 0.000101 * T) * (dr * 2.0 * M).sin() + 0.000290 * (dr * 3.0 * M).sin();
     let mut L = L0 + DL; // true longitude, degree
     L = L * dr;
-    L = L - (PI as f64) * 2.0 * (((L / (PI as f64 * 2.0)) as i64) as f64); // Normalize to (0, 2*PI)
+    // Normalize to (0, 2*PI). Must be floor(), not `as i64`: before 2000-01-01
+    // T is negative, so L is negative, and `as i64` truncates towards zero
+    // which would leave L negative.
+    L = L - (PI as f64) * 2.0 * (L / (PI as f64 * 2.0)).floor();
 
     return L;
 }
@@ -105,7 +108,7 @@ pub fn get_sun_longitude(jd: i64, time_zone: i64) -> i64 {
 }
 
 pub fn get_leap_month_offset(a11: i64, time_zone: i64) -> i64 {
-    let k = ((a11 as f64 - 2415021.076998695) / 29.530588853 + 0.5) as i64;
+    let k = ((a11 as f64 - 2415021.076998695) / 29.530588853 + 0.5).floor() as i64;
     let mut last: i64;
     let mut i = 1; // We start with the month following lunar month 11
     let mut arc = get_sun_longitude(get_new_moon_day(k + i, time_zone), time_zone);

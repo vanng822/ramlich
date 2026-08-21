@@ -63,7 +63,7 @@ pub fn solar2lunar(solar_date: SolarDate, time_zone: i64) -> LunarDate {
 
     let day_number = fns::jd_from_date(dd, mm, yyyy);
 
-    let k = ((day_number as f64 - 2415021.076998695) / 29.530588853) as i64;
+    let k = ((day_number as f64 - 2415021.076998695) / 29.530588853).floor() as i64;
     let mut month_start = get_new_moon_day(k + 1, time_zone);
     if month_start > day_number {
         month_start = get_new_moon_day(k, time_zone);
@@ -123,7 +123,7 @@ pub fn lunar2solar(luna_date: LunarDate, time_zone: i64) -> SolarDate {
         a11 = get_lunar_month11(lunar_year, time_zone);
         b11 = get_lunar_month11(lunar_year + 1, time_zone);
     }
-    let k = (0.5 + (a11 as f64 - 2415021.076998695) / 29.530588853) as i64;
+    let k = (0.5 + (a11 as f64 - 2415021.076998695) / 29.530588853).floor() as i64;
     let mut off = lunar_month - 11;
 
     if off < 0 {
@@ -189,6 +189,49 @@ mod tests {
         assert_eq!(result.month, 4);
         assert_eq!(result.year, 2012);
         assert_eq!(result.is_leap, false);
+    }
+
+    // Dates before 2000-01-01 give a negative Julian century, and so a negative
+    // sun longitude before normalization. Truncating towards zero instead of
+    // flooring there used to put these a whole month early.
+    #[test]
+    fn solar2lunar_before_2000_test() {
+        for (solar, want) in [
+            ((1900, 1, 1), (1899, 12, 1)),
+            ((1917, 1, 1), (1916, 12, 8)),
+            ((1936, 1, 1), (1935, 12, 7)),
+            ((1955, 1, 1), (1954, 12, 8)),
+            ((1974, 1, 1), (1973, 12, 9)),
+            ((1990, 1, 1), (1989, 12, 5)),
+            ((1998, 1, 1), (1997, 12, 4)),
+        ] {
+            let result = solar2lunar(SolarDate::new(solar.0, solar.1, solar.2), 7);
+            assert_eq!((result.year, result.month, result.day), want);
+            assert_eq!(result.is_leap, false);
+        }
+    }
+
+    // Tet for a few years before 2000, which the same bug left intact but which
+    // pin the month boundaries either side of the dates above.
+    #[test]
+    fn solar2lunar_tet_before_2000_test() {
+        for (solar, want_year) in [((1970, 2, 6), 1970), ((1991, 2, 15), 1991), ((1999, 2, 16), 1999)]
+        {
+            let result = solar2lunar(SolarDate::new(solar.0, solar.1, solar.2), 7);
+            assert_eq!((result.year, result.month, result.day), (want_year, 1, 1));
+        }
+    }
+
+    // The day before leap month 6 of 2025 starts.
+    #[test]
+    fn solar2lunar_leap_month_boundary_2025_test() {
+        let result = solar2lunar(SolarDate::new(2025, 7, 24), 7);
+        assert_eq!((result.year, result.month, result.day), (2025, 6, 30));
+        assert_eq!(result.is_leap, false);
+
+        let result = solar2lunar(SolarDate::new(2025, 7, 25), 7);
+        assert_eq!((result.year, result.month, result.day), (2025, 6, 1));
+        assert_eq!(result.is_leap, true);
     }
 
     #[test]
